@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #2</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #2</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To understand what a "library" is in terms of development. We'll be
+            using the popular jQuery library to simplify what we did in the last lesson.</p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>View the source code for THIS page that you are currently reading (ltp_lesson2.html) and notice
+                        the added &lt;script&gt; line near the bottom of the document. This loads the jQuery library
+                        which we have located in our resources folder and allows us to use it.
+<xmp class="prettyprint"><body>
+    ... content here ...
+    ... content here ...
+    <script src="resources/jQuery-2.1.4.js"></script>
+</body></xmp>
+                        
+                    </li>
+                    <li>Hit F12 to open the developer tools menu.</li>
+                    <li>Go to the "Console" tab.</li>
+                    <li>
+                        <h3>Introducing jQuery:</h3>
+                        Type the following into the console:<br/>
+                        <code><xmp class="prettyprint">$('#testing ol').append('<li>Added with jQuery!</li>');</xmp></code><br/>
+                        
+                        <div class="explanation">
+                            <h3>Explanation:</h3>
+                            <p>
+                            The dollar sign followed by parenthesis $() is a special notation mostly used by jQuery
+                            for selecting DOM elements. $('#testing') would tell jQuery to grab the element where id="testing".
+<xmp class="prettyprint"><section id="testing">
+    ...
+</section>
+</xmp>
+                            </p>
+                            <p>
+                            $('#testing ol') tells jQuery to grab any &lt;ol&gt; elements that are children of #testing.
+                            Notice that in this case, &lt;ol&gt; is not a direct child of &lt;section id="testing"&gt;,
+                            but rather a grandchild, with the direct parent being &lt;span&gt;.
+<xmp class="prettyprint"><section id="testing">
+    <span>
+        <h2>Test Result Area:</h2>
+        <ol>
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ol>
+    </span>
+</section></xmp>
+                            </p>
+                            <p>
+                            If we had wanted to
+                            limit the search to direct children only (which would have returned zero results as &lt;span&gt; is the only
+                            direct child) we could have written it this way: $('#testing > ol')
+                            </p>
+                            <p>
+                                To learn more about jQuery selectors, I highly recommend looking at the following reference:
+                                <a target="_blank" href="http://www.w3schools.com/jquery/jquery_ref_selectors.asp">http://www.w3schools.com/jquery/jquery_ref_selectors.asp</a>
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        Observe that this single jQuery powered line of code accomplished the same task as writing 4 lines of code using
+                        the native javascript that we used in the previous lesson!
+
+<xmp class="prettyprint">// Create an <li> node
+var liNode = document.createElement("LI");
+    
+// Create a text node
+var textNode = document.createTextNode("I ROCK!");
+    
+// Attach the text to the LI node to create the equivalent of <li>TEXT</li>
+liNode.appendChild(textNode);
+    
+// Attach the new list item to the <ul> unordered list.
+document.getElementById('testing').children[1].children[1].appendChild(liNode);
+</xmp>
+                    </li>
+
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                <ol>
+                    <li>Item 1</li>
+                    <li>Item 2</li>
+                    <li>Item 3</li>
+                </ol>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Explanation:</h2>
+            <h3>Libraries:</h3>
+            <p>
+                Native code (javascript or otherwise) is code you can run without any external support, as it's a built-in
+                part of the programming language. The 4 lines of code we ran in Lesson #1 were an example of native javascript
+                code.
+            </p>
+            <p>
+                Libaries on the other hand, are pre-packaged code that you have to include in your project in order to make
+                use of them. jQuery is an example of one such library, and is written by many (probably 100+) developers
+                that have contributed to it over the years. The reason jQuery was made is to simplify and improve the way
+                certain tasks are accomplished - as you saw in this lesson.
+            </p>
+            <p>
+                Learning how to use Libraries will be super important in your life as a developer! Technically, you don't
+                NEED them - you could just implement whatever you want using native code and working through the issues that
+                come up yourself - but doing so would be like reinventing the wheel. If somebody's already written the code
+                to accomplish what you're trying to do, and they've licensed the code to be used by others, might as well
+                save some time and just use/tweak what's already been written.
+            </p>
+            <p>
+                Regarding jQuery, there's TONS of stuff you can do with it, and we're not going to cover it in-depth here, but
+                you can Google something like "cool jQuery effects" to learn more. We will however be using some additional
+                jQuery functionality in future lessons - so stay tuned.
+            </p>
+            
+            <h3>DOM Manipulation:</h3>
+            <p>
+                Alright, so you've now had two lessons that involved adding an item to a list. What you may not realize, is 
+                that modifying lists is one of the MOST COMMON uses for javascript in modern web applications! I'll give you
+                three examples from Facebook:
+                <ul>
+                    <li>User Search - When you start typing a name in the box at the top of Facebook, you'll see a drop down
+                    list of matching names before you even finish typing. This is using what you've just learned!!! As you
+                    start typing, Facebook is using javascript to send the partial name to the web server, and that server is
+                    responding with a list of possible matches. Javascript is then used to load those possible matching names
+                    into the drop down list you see.</li>
+                    <li>Chat - When you chat with someone over Facebook using one of those little chat windows at the bottom
+                    of the screen, what you're actually seeing is a list of messages between people. When a new message is
+                    received, javascript is used to update the chat window with the new message.</li>
+                    <li>Infinite Scrolling - You know how you can just keep scrolling down forever in Facebook or Twitter and
+                    never have to hit a "next page" button? This pageless "infinite scrolling" effect is accomplished by
+                    making requests to the back-end web servers for more posts as you scroll, and then using javascript
+                    to load them into the bottom of your post list - so you never hit the end.</li>
+                </ul>
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                So far we've used simple javascript statements to manipulate the DOM, which is cool, but it's time to step
+                up our game. Next we'll be learning about Functions, which will be a HUGE step forwards in your goal of
+                learning to be a software developer.
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson1.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="intermission-2-3.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+</body>
+</html>

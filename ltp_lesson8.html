@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #8</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #8</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To get more experience with Views and Controllers, and using loops to do practical things.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>
+                We're going to create a tool for transposing songs from one key to another. For input it will require we tell it what
+                key the song was originally in, and then give it the lyrics with chords.
+                The lyrics and chords must be on separate lines, and the lines with chords must start with an asterisk *.
+                We'll then specify the key we want the song to be transposed to, and let our software do the work.
+            </p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>Open up "lesson8.js" from the "resources/student/" folder in your text editor. All the code you are instructed to write for this lesson
+                        should be saved into that .js file.    
+                        
+                        <p>
+                        Note: The HTML markup in the testing area for this lesson looks like this:
+<xmp class="prettyprint"><section id="testing">
+    <div id="bar"></div>
+    <span class="wrap">
+        <h2>Test Result Area:</h2>
+        Song Key:
+        <select id="songKey">
+            <option value="A">A</option>
+            <option value="A#">A#</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="C#">C#</option>
+            <option value="D">D</option>
+            <option value="D#">D#</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#</option>
+            <option value="G">G</option>
+            <option value="G#">G#</option>
+        </select>
+                
+        <textarea id="chords">
+        * F#m7   CM7   G  B  D#  C2
+          Roses are red, violets are blue
+        * Dm E    A   Bmaj7
+          This is my song, yeah yeah yeah
+        </textarea>    
+        <hr>
+
+        Output Key:
+        <select id="outputKey">
+            <option value="A">A</option>
+            <option value="A#">A#</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="C#">C#</option>
+            <option value="D">D</option>
+            <option value="D#">D#</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+            <option value="F#">F#</option>
+            <option value="G">G</option>
+            <option value="G#">G#</option>
+        </select>
+        <input type="button" id="convert" value="Convert">
+        <pre id="song"></pre>
+    </span>
+</section>
+</xmp>
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Explaining Music Basics:</h3>
+                        <p>
+                            The first thing you've probably noticed already in this lesson is that the HTML in our testing area is longer
+                            than usual, mainly because of those select boxes with the different song key options. In-case you aren't into music and 
+                            don't understand the meaning behind those options, let me explain it just a bit. Musical keys are labeled from A to G, 
+                            with each key having a sharp version between them except for between B-&gt;C and E-&gt;F. This gives us a total of 12
+                            possible primary keys.
+                        </p>
+                        <div class="note">Note for the musically knowledgeable: Yes, I'm purposefully ignoring discussion of flats. We'll
+                        refer only to sharps in this lesson. Also not bringing up major vs minor keys.</div>
+                        <p>
+                            All you need to understand for this lesson is that a song is always in a single key at any given time. If you want
+                            to change the key of the song, you have to change the notes to match the new key. For convenience I've included
+                            some meaningless dummy lyrics and chords for us to use for testing. After completion of our app, you can find more
+                            chords to actual songs at places such as <a href="https://www.ultimate-guitar.com/top/top100.htm">www.ultimate-guitar.com</a>
+                            where if you click on a song you can copy and paste the chords+lyrics. Just remember to add the * at the start of any line
+                            with chords.
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Initializing our App:</h3>
+                        <p>
+                            So in the last lesson, we used the MVC (model-view-controller) methodology and started building in that order - first
+                            we built the model, then the view, then the controller, then initialized our code at the very end. This lesson let's
+                            switch it up and initialize our code first using dummy constructors, then we'll fill in our controller, then our View,
+                            and we won't use a Model at all (but you can add one as an exercise if you want).
+                        </p>
+                        <p>
+                            The purpose behind doing it differently is I want you to see that there's multiple ways you can go about building your
+                            app. Which way makes the most sense to you is entirely up to your personal preference.
+                        </p>
+                        <p>
+                            Add the following to your lesson8.js file:
+                        </p>
+<xmp class="prettyprint">$(function() {
+    
+    controller  = new Controller();
+    view        = new View();
+    $('#convert').on('click', controller.run);
+      
+});
+
+function Controller() {
+    
+}
+
+function View() {
+    
+}
+</xmp>
+                        <p>
+                            If you save and reload, you shouldn't get any errors. It won't do anything... but the stubs at least make the code
+                            valid.
+                        </p>
+                        <p>
+                            This should look very familiar by now. First we are using our constructor functions to make a Controller and View object.
+                            Then we are using jQuery to register a click event on our button that calls our Controller's "run" method.
+                        </p>
+                    </li>
+                    <li>
+                        <h3>The Controller:</h3>
+                        <p>
+                            Let's start by adding a couple private data members to our controller:
+                        </p>
+<pre class="prettyprint">
+var self = this;
+var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+</pre>
+                    <p>
+                        The second line where we create an array of strings representing the possible musicial keys should be pretty
+                        self-explanatory, we'll use this array further down in our logic. The first part where we say "var self = this" requires
+                        quite a bit more explanation though. For now just know that "this" refers to our controller object we'll be creating
+                        out of this constructor. The reason
+                        we're assigning a reference of our object to a variable called "self" we'll explain a little later.
+                    </p>
+                    <p>
+                        Next let's add the method to controller that will be called when a user clicks the "convert" button on our page:    
+                    </p>
+<xmp class="prettyprint">this.run = function() {
+        var inputKey    = view.getInputKey();
+        var outputKey   = view.getOutputKey();
+        var keyDiff     = keys.indexOf(outputKey) - keys.indexOf(inputKey);
+
+        var inputSong   = view.getInputSong();
+        var lines = inputSong.split('\n');
+        
+        for (var i=0; i < lines.length; i++) {
+            if (lines[i].charAt(0) === '*')
+                lines[i] = self.convert(lines[i], keyDiff);
+        }
+        
+        view.displayResult(lines);
+        
+    };
+</xmp>
+                    <p>
+                        Here we are getting the song's input key (the key it was written in, this never changes) and the output key
+                        (the key we need to convert the song to) from the View. From those, we are then calculating the number of steps
+                        in difference between the input and the output. I.E. If the input key of the song is in "A" and the desired output
+                        is in key "C" the difference is +3 keys over. You can easily calculate this by hand by looking at the "keys" array
+                        we added. Starting at 'A', count how many steps over in the array you have to move to get to 'C'. Using some pseudo
+                        code we can show it as:
+                    </p>
+<pre class="prettyprint">
+var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+keys[0] == 'A';  // Starting point
+keys[1] == 'A#'; // +1 over
+keys[2] == 'B';  // +2 over
+keys[3] == 'C';  // +3 over
+var keyDiff = outputKeyIndex - inputKeyIndex
+            = 3 - 0
+            = 3
+</pre>
+                    <p>
+                        What if the song is given to us in the key of 'G' and we need to convert it to 'E'? In other words, what if we
+                        need to go backwards in our array? The keyDiff can be a negative number too:
+                    </p>
+ <pre class="prettyprint">
+var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+keys[10] == 'G';  // Starting point
+keys[9] == 'F#';  // -1 over
+keys[8] == 'F';   // -2 over
+keys[7] == 'E';   // -3 over
+var keyDiff = outputKeyIndex - inputKeyIndex
+            = 7 - 10
+            = -3
+</pre>   
+                    <p>
+                        Arrays (such as our keys array) have some built-in methods you can call on them. "indexOf" is one of those built-in
+                        methods. What "indexOf(item)" does is search the array for "item" and if it is found, it returns the offset within
+                        the array that the item is located at. If you look back at our code, you'll see that's how we're getting our 
+                        outputKeyIndex and inputKeyIndex values.
+                    </p>
+                    <div class="note">Note: You can learn more about built-in array methods <a href="http://www.w3schools.com/jsref/jsref_obj_array.asp">here</a>.</div>
+    
+                    <p>
+                        Next up you'll see in our code we are asking the View for the song itself (the lyrics+chords) and storing that 
+                        in a variable called "inputSong."
+<pre class="prettyprint">
+var inputSong  = view.getInputSong();
+var lines      = inputSong.split('\n');
+</pre>
+                        inputSong is a string variable, and just like arrays, strings also have built-in methods you can call on them. One of
+                        those methods which we're using here is Split. "myString.split(separator)" looks for the separator within 
+                        myString and anytime it's found, it splits the string into another segment called a substring. 
+                        After it is done splitting the string up, it then returns an array of all the different substrings. Example:
+                    </p>
+<pre class="prettyprint">
+var myString = 'AAABCCC';
+var pieces = myString.split('B');
+pieces[0]; // is equal to 'AAA';
+pieces[1]; // is equal to 'CCC';
+</pre>
+                    <p>
+                        In our case, we're splitting the string anytime we encounter the special '\n' character. '\n' is a hidden "newline"
+                        character found at the end of a line of text. So when we call:
+                        <code class="prettyprint">var lines = inputSong.split('\n');</code>
+                        What we're getting back is an array of strings where each line of the song is separate like so:
+                    </p>
+<pre class="prettyprint">
+lines[0] = '* F#m7   CM7   G  B  D#  C2';
+lines[1] = '  Roses are red, violets are blue';
+lines[2] = '* Dm E    A   Bmaj7';
+lines[3] = '  This is my song, yeah yeah yeah';
+</pre>
+                    <div class="note">Note: You can learn more about built-in string methods <a href="http://www.w3schools.com/jsref/jsref_obj_string.asp">here</a>.</div>
+                    
+                    <p>
+                        After this setup work is done, we get to the loop:    
+                    </p>
+<xmp class="prettyprint">for (var i=0; i < lines.length; i++) {
+    if (lines[i].charAt(0) === '*')
+        lines[i] = self.convert(lines[i], keyDiff);
+}                      
+</xmp>
+                    <p>
+                        Here we are looping once per line in our "lines" array. For each line (accessed in the loop via lines[i]),
+                        we check if the first character on that line is an asterisk *. To do that we use another string method named
+                        charAt() that will return the character at a given offset within the string. So "lines[i].charAt(0)" returns
+                        the character at offset 0 (aka the first character).
+                    </p>
+                    <p>
+                        If the first character is NOT an asterisk, then we assume the line is lyrics and do nothing. If it is an asterisk,
+                        then that tells us this line is full of chords that we need to change.
+                        Specifically we're changing the value for that line to whatever
+                        "self.convert(lines[i], keyDiff)" returns. Remember at the beginning when we said "var self = this" and I explained
+                        that "self" will reference our controller object? With that in mind, you should understand that what we're doing here
+                        is calling another controller method named "convert" and passing it two arguments - the current line of chords and
+                        the key difference we calculated earlier. This "convert" method will (after we write it) give us back the chords
+                        for that line in the song in the new key we requested.
+                    </p>
+                    <p>
+                        The final thing we do in our run() method is call the View to output our converted song to the web page. We pass to the
+                        View's displayResult method our (now converted) array of chords+lyrics.
+                        <code class="prettyprint">view.displayResult(lines);</code>
+                    </p>
+                    <p>
+                        Alright now that we've finished implementing and explaining the run() method, let's take a step back and further examine
+                        that line:
+                        <code><span class="hl">self</span>.convert(lines[i], keyDiff)</code>
+                        You may or may not have wondered about it, but if self == this, then why didn't we just say:
+                        <code><span class="hl">this</span>.convert(lines[i], keyDiff)</code>
+                        ? The answer to this question is semi-important and requires a timeout to talk about the "this" keyword.
+                    </p>
+                    <div class="timeout">
+                        <h3>The "this" keyword:</h3>
+                        <p>
+                            We've used the "this" keyword when working with object's before - 
+                            you should remember using it when creating object constructors for the previous lesson as well as our 
+                            Counters from lesson 6.
+                        </p>
+                        <p>
+                            In most programming languages, "this" always refers to the current object. So when you say:
+                            <code><span class="hl">this</span>.someFunction()</code>
+                            That language would know you are wanting to call the "someFunction" method within your current object.
+                            Javascript on the other hand is abnormal in how it treats the "this" keyword. In Javascript the value
+                            of the "this" keyword is mostly determined by the invocation context and where the code is called. In
+                            other words... the value of "this" can change, and might not be what you expect it to be.
+                        </p>
+                        <p>
+                            To make this more concrete, let's make an object constructor for a Car and play around with it a bit. Here's our
+                            Car:
+                        </p>
+<pre class="prettyprint">
+function Car() {
+    this.brand = 'Ford';
+    this.model = 'Explorer';
+    this.year = '2016';
+    this.getInfo = function() {
+        return this.year + ' ' + this.brand + ' ' + this.model;
+    };
+}
+</pre>
+                        <p>
+                            In it we have the car's brand, model, and year all publicably accessible and then a method called "getInfo"
+                            that outputs all the info together like "2016 Ford Explorer". When we create an object out of this constructor,
+                            "this" at the time of creation will always refer to the new object being created. For this reason saying:
+                        </p>
+<pre>
+function Car() {
+    <span class="hl">this</span>.brand = 'Ford';
+    <span class="hl">this</span>.model = 'Explorer';
+    <span class="hl">this</span>.year = '2016';
+    <span class="hl">this</span>.getInfo = function() {
+        return this.year + ' ' + this.brand + ' ' + this.model;
+    };
+}
+</pre>
+                        <p>
+                            Is safe, because the "this" keywords highlighted in orange will always refer to the object they are a part of.
+                            The "this" keywords in the getInfo() method are not always safe however as we will explore below:
+                        </p>
+                        
+                        <code class="prettyprint">var car = new Car();</code>
+                        ^ "this" refers to the new "car" object during creation. All good here.
+
+                        <code class="prettyprint">car.getInfo();</code>
+                        ^ "this" refers to the object to the left of the period. Aka "car". So this is also all good.
+                        This code will return "2016 Ford Explorer".
+ 
+<pre class="prettyprint">
+var htmlButton = {
+    text : 'Convert',
+    event : car.getInfo
+};
+htmlButton.event(); // trigger Event.
+</pre>
+                        ^ Here we create an object that represents our Convert button on our web page. This isn't our 'actual' 
+                        button, but it's similar to what the Button object in the DOM might look like. It has two properties,
+                        the text that will be displayed on the button, and the event we want to execute when the button is pressed.
+                        We pass the event property a reference to our getInfo function because we want the year, brand, and model of our car
+                        to be returned anytime we click the button. All good right? You'd think it would output "2016 Ford Explorer" when
+                        the event is triggered... WRONG!
+                        
+                        <p>
+                            This code above will return "undefined undefined undefined". The reason being, the "htmlButton" is the one
+                            calling our getInfo() method, so within getInfo the "this" keyword will refer to our htmlButton object and NOT
+                            the Car object of which it is a member! Dun dun dun! So when we say:
+                            <code class="prettyprint">return this.year + ' ' + this.brand + ' ' + this.model;</code>
+                            It's trying to access year, brand, and model properties within htmlButton. And since htmlButton doesn't have
+                            those properties, that's why it returns 'undefined'.
+                            Feel free to add this code to your project and play around with
+                            it in the browser console if you want to.
+                        </p>
+                        <p>
+                            There are multiple solutions to fix this problem, but the easiest way (in my opinion) is to add the "var self = this"
+                            declaration to our constructor. Since we KNOW that "this" will refer to our object at the time we create it with the
+                            "new" keyword, we can be guaranteed that "self" will refer to the right object. See our modified code below:
+                        </p>
+<pre class="prettyprint">
+function Car() {
+    var self = this;
+    this.brand = 'Ford';
+    this.model = 'Explorer';
+    this.year = '2016';
+    this.getInfo = function() {
+        return self.year + ' ' + self.brand + ' ' + self.model;
+    };
+}
+</pre>
+                    
+                        <p>
+                            Now when we call "htmlButton.event()" it will correctly return "2016 Ford Explorer".
+                        </p>
+                        <p>
+                            So to return back to our programming exercise and why I brought this up, recall that our jQuery code
+                            to register an event on our button looked like this:
+                            <code class="prettyprint">$('#convert').on('click', controller.run);</code>
+                            So then in the run() method of our controller if we had said:
+                            <code><span class="hl">this</span>.convert(lines[i], keyDiff)</code>
+                            We would have run into the same issue! "this" would have referred to the HTML Button and our code would have
+                            tried to access a "convert" method that is part of the button - which would obviously not work. THAT is why
+                            we have the little "var self = this" declaration at the top of our constructor and use "self".
+                        </p>
+                        <p>
+                            As a general rule, if you need to refer to another method in the same object, make a "self" variable and use it
+                            instead of "this". Note: some developers use "_this" or "that" as names instead of "self".
+                        </p>
+                    </div>
+                    <div>
+                        <p>
+                            Ok, now that we're done with that tangent, let's get back to building our controller. We just finished
+                            building our run() method, and now we need to write the convert() method that run() calls to transpose
+                            the chords. Add the following
+                            to your controller:
+                        </p>
+<xmp class="prettyprint">this.convert = function(line, keyDiff) {
+
+    // Get rid of asterisk at start of line.
+    line = line.replace('*', ' ');
+
+    // Create empty string we will use to store transposed
+    // line of chords in.
+    var newLine = '';
+
+    // Loop for each character in our chords string...
+    for (var i=0; i < line.length; i++) {
+
+        // Grab current character in chord string.
+        var c = line.charAt(i);
+
+        // Grab location of this character in our keys array.
+        // Returns -1 if not found.
+        var cLoc = keys.indexOf(c);
+
+        // If character is a key, do stuff to convert it...
+        if (cLoc != -1) {
+
+            // If the next character is a '#', like in "F#m7"...
+            if (i+1 < line.length && line.charAt(i+1) == '#') {
+                // Convert F# into appropriate output key.
+                newLine += keys[(keys.indexOf(c+'#') + keyDiff) % 12];
+                i++;
+            }
+
+            // The next character is NOT a '#', like in "Fm7"
+            else
+                // Convert F into appropriate output key.
+                newLine += keys[(cLoc + keyDiff) % 12];               
+        }
+
+        // Character is NOT a key, so just output it back out.
+        else 
+            newLine += line.charAt(i);
+    }
+
+    // Return our transposed line of chords.
+    return newLine;
+};
+</xmp>
+                        <p>
+                            So the convert method has two parameters, the first one is a string of the chords that need to be converted,
+                            and the second one is the key difference between the song's default key and the desired key to transpose to.
+                            The first thing we do in the method is replace the asterisk * at the start of our chord string with a blank space.
+                            The asterisk has served its purpose of identifying this line as a chord line, and we don't need or want it in the 
+                            converted output.
+                            <code class="prettyprint">line = line.replace('*', ' ');</code>
+                            Right after that we declare a new string called newLine that we'll use to store our transposed chords and start
+                            our loop.
+                        </p>
+                        <p>
+                            For our loop we are looping while "i &lt; line.length". To explain this you need to know that every string
+                            in Javascript has a "length" property that returns how many characters are in that string. For example
+                            "ABCD".length would return 4. So we're running our
+                            loop once for each character in the chord string. Then on the first line of the loop we are grabbing the current
+                            character in the string via:
+                            <code>var c = line.charAt(i);</code>
+                            To make absolutely sure you understand what this is doing, see the example below:
+                        </p>
+<pre class="prettyprint">
+// If "line" is "ABCD"...
+// The first time through loop i=0 and line.charAt(i) returns 'A'
+// The second time through loop i=1 and line.charAt(i) returns 'B'
+// Third time through loop i=3 and line.charAt(i) returns 'C'
+// etc
+</pre>
+                        <p>
+                            Next up we need to find out if the character we grabbed is a key in our "keys" array, and if so, we want
+                            to know the character's location (aka offset) within the array. To do this we call:
+                            <code class="prettyprint">var cLoc = keys.indexOf(c);</code>
+                            We already covered how the indexOf method for arrays works, so we won't rehash that, but I should mention that
+                            the indexOf method returns -1 if it doesn't find the search term in the array.                            
+                        </p>
+                        <p>
+                            We follow that with the logic in our loop:
+                        </p>
+<pre class="prettyprint">
+if (cLoc != -1) {
+    // if the character's location in the keys array
+    // ISN'T -1, meaning indexOf() DID find it...
+    // Then do stuff to convert the key.
+}
+else {
+    // The character c is not a Key,
+    // so just add it to our output without any conversion.
+    newLine += line.charAt(i);
+}
+</pre>
+                        <p>
+                            With that in mind, let's pretend our loop
+                            is going over the chord "D#m7". When c = 'D', indexOf will find 'D' in our keys array and we'll enter the
+                            IF part of the logic and start doing stuff to convert 'D' to another key. When c = 'm' and
+                            c = '7', indexOf will fail to find those characters in our keys array and cLoc will equal -1, sending
+                            us to the ELSE code where we simply add those characters to our output without changing them. The situation
+                            where c = '#' is a special case that we will PREVENT FROM HAPPENING. To understand why and how, we
+                            have to dig into how we convert a key such as 'D' into another key.
+                        </p>
+                        <p>
+                            When the current character is a key in our keys array such as 'D' we proceed to execute the following code
+                            in our IF statement:
+                        </p>
+<xmp class="prettyprint">if (i+1 < line.length && line.charAt(i+1) == '#') {
+    newLine += keys[(keys.indexOf(c+'#') + keyDiff) % 12];
+    i++;
+}
+else
+    newLine += keys[(cLoc + keyDiff) % 12]; 
+</xmp>
+                    </div>
+                        <p>
+                            What we're doing here is finding out if the chord we're currently transposing is a sharp or not.
+                            To do that, we need to look ahead in our string and find out if the next character is a '#'. In case
+                            it's not clear why we are doing this, pretend our current chord is 'D#' and we are transposing
+                            the song two steps over such that D# needs to be turned into 'F' (look back at our 'keys' array to verify
+                            to yourself that F is two steps over from D#). If we just transpose without any
+                            IF logic, our code will look in the keys array for 'D', see it is in there, and without thinking
+                            convert it into an F. The next time through the loop it would see c = '#', not find '#' in the 
+                            keys array and our final output would be D# getting turned into F# - which is not correct!
+                        </p>
+                        <p>
+                            To solve that issue, we are using our IF statement you see above. In our IF statement we are checking
+                            two things, first, as a precautionary measure we check that we aren't at the end of the string with 
+                            "i+1 &lt; line.length". I.E If our
+                            string was only 4 characters long like "ABCD", we wouldn't want to ask for the 5th character in that string
+                            with "ABCD".charAt(4). That wouldn't make sense and in some programming languages doing stuff like that
+                            would actually crash our program. If this check passes, then our second condition gets evaluated which is
+                            "line.charAt(i+1) == '#'". This evaluates to True if the next character is a '#'.
+                        </p>
+                        <div class="explanation">
+                            <div class="note">Recall: The == operator is used to check equality, the single = operator is used for assignment.</div>
+<pre class="prettyprint">
+x = 3; // Returns nothing. Assigns 3 to x.
+x == 3; // Returns true or false. Checks if x is equal to 3.
+</pre>
+                        </div>
+                        <p>
+                            Now that we understand the IF/ELSE statement, let's go over what's happening to do the actual transposition.
+                            Let's start with the ELSE part where our chord we need to transpose is not a sharp. The code looks like this:
+                            <code class="prettyprint">newLine += keys[(cLoc + keyDiff) % 12];</code>
+                            Remember that "cLoc" is the location within the keys array of our current note. If c = 'D', then cLoc
+                            would equal '5'. Look at the keys array again to verify this, and recall that we start counting offsets at 0:
+                            <code class="prettyprint">var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];</code>
+                            keyDiff you should recall will be a positive or negative number representing how many steps over we need
+                            to transpose. So "cLoc + keyDiff" is the current key plus the number of steps forward or backwards within
+                            the key array we want to take. If our input key is 'D' and our desired output key is 'C', then keyDiff
+                            will equal -2 and cLoc + keyDiff will be "5 + (-2)" which equals 3. Keys[3] == 'C'. Hurray!
+                        </p>
+                        <p>
+                            So hopefully that makes sense to you. Now to explain the modulus operator % and why we are saying "% 12"
+                            after we calulate cLoc+keyDiff. The modulus operator effectively puts a cap on how large a number can get,
+                            and causes counting to loop back to 0 if you reach that number. If you don't go reach the specified number,
+                            the modulus does nothing. To state it a different way, the modulus operator is like asking for the remainder
+                            after you divide a number. 3 divides 7 two times evenly and has a remainder of 1, so "7 % 3" would return 1.
+                            3 divides 6 two times and has a remainder of 0, so "6 % 3" would return 0.
+                            See more examples below:
+<pre class="prettyprint">4 % 12 == 4;
+11 % 12 == 11;
+12 % 12 == 0;
+16 % 12 == 4;
+23 % 12 == 11;
+24 % 12 == 0;
+</pre>
+                            By saying "cLoc+keyDiff % 12" we are ensuring that if we go off the end of the keys array, we loop back around to the 
+                            front. Our keys array has a length of 12, and the last item in it is accessed via "keys[11]".
+                            This % operator is important to have because it IS possible that "cLoc+keyDiff" can be greater than 11. Let's pretend
+                            our song's input key is 'A', the desired output key is 'G', and the note we need to transpose is a 'D' note. See
+                            the following pseudo code:
+                        </p>
+<pre class="prettyprint">
+// Input key == 'A', keys.indexOf('A') == 0
+// Output key == 'G', keys.indexOf('G') == 10
+keyDiff = outputKeyIndex - inputKeyIndex
+        = 10 - 0
+        = 10
+
+var c = 'D'
+var cLoc = keys.indexOf(c)
+         = 5
+
+cLoc + keyDiff == 5 + 10 == 15
+</pre>
+                        <p>
+                            Under this scenario 'D' needs to be transposed 10 steps over, but that would run us off the end of our keys array!
+                            The modulus % operator loops us back around to the start of our array when we would otherwise run off the end.
+                            "15 % 12" equals 3 and keys[3] equals 'C' which is indeed the correct key for the D to be transposed into.
+                        </p>
+                        <p>
+                            Phew, almost done with our logic. Now let's examine the case where we are dealing with a sharp note. Our code in the
+                            IF portion looks like this:
+                        </p>
+<xmp class="prettyprint">newLine += keys[(keys.indexOf(c+'#') + keyDiff) % 12];
+i++;
+</xmp>
+                        <p>
+                            This is essentially the same thing except since we know the next time through our loop our character would be
+                            '#' (remember we peeked ahead in our IF statement condition), we are asking for the offset in the keys array of our
+                            current character + '#' rather than the current character's location (cLoc). 
+                            So if our current character is 'D' and we know the next character
+                            in the string is '#', we ask for the location in the keys array of 'D#' and use that because the note we need to transpose
+                            is a 'D#' not a 'D'! 
+                        </p>
+                        <p>
+                            Remember how I stated earlier that c = '#' is a special case that we would prevent from happening?
+                            We know at this point in our code that the next character in our string is a '#', and so the next time through our
+                            loop "var c = line.charAt(i)" would end up grabbing it and assigning it to 'c'. To prevent that from happening (since
+                            we already handled the #) we are skipping the next iteration of our loop by incrementing i with "i++". If our chord
+                            is "D#m7", that would skip us over the # and our next value for 'c' would be 'm'.
+                        </p>
+                        <p>
+                            HOLY MOLY explaining all that was a mouthful. Are you as exhausted as I am right now? Don't worry, understanding
+                            what's going on in an application gets WAY easier with experience. Right now any sense of brain numbing fuzziness
+                            you might be experiencing is totally normal. But look on the bright side, things will only get easier from here on
+                            out and you are learning how to control a computer and make it do cool things! Next up is our View, but that is a
+                            cakewalk to explain; most of it you already know.
+                        </p>
+                    </li>
+                    <li>
+                        <h3>The View:</h3>
+                        <p>
+                            We already Initialized our app, created our Controller with all our logic in it, and all we have left to do is write
+                            our View and make sure it has the methods to provide all the data the Controller is asking from it. Add the following
+                            to your code file:
+                        </p>
+                        
+<xmp class="prettyprint">function View() {
+    
+    this.getInputKey   = function() {
+        return $('#songKey option:selected').val();
+    };
+    
+    this.getOutputKey  = function() { 
+        return $('#outputKey option:selected').val() 
+    };
+    
+    this.getInputSong  = function() {
+        return $('#chords').val();
+    };
+    
+    this.displayResult = function(lines) {
+        
+        var song = '';
+        for (var i=0; i < lines.length; i++) {
+            song += lines[i] + '\n';
+        }
+        $('#song').text(song);
+    };
+}
+</xmp>
+                        <p>
+                            Everything you see in the View is stuff we've covered before, so hopefully it all makes sense to you. The
+                            displayResult method is given an array of strings as an argument and is using a loop to concatonate
+                            those strings back together into one single string. Remember how we used "inputSong.split('\n')" to cut our
+                            song up into an array with each line of the song separated? What displayResult is doing is just the opposite
+                            and is putting all those lines of the song back together. This allows us to use a single DOM update
+                            to output our transposed song to the web page rather than outputting each line individually 
+                            (recall it was explained in a previous lesson that DOM updates are slow, and you want to minimize how many
+                            you perform).
+                        </p>
+                        <p>
+                            After the view is added, your song transposing app should be working! Test it out. If you are having any problems
+                            you can't fix on your own,
+                            click the button below to see what your code should look like after all is said and done:
+                        </p>
+                        <div class="explore" id="fullCode" alt="See Full Code">
+<xmp class="prettyprint">$(function() {
+    
+    controller  = new Controller();
+    view        = new View();
+    $('#convert').on('click', controller.run);
+      
+});
+
+function Controller() {
+    
+    var self = this;
+    var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+    
+    this.run = function() {
+        // 'this' is the button that calls the function. 'this.id' will return "convert".
+        var inputKey    = view.getInputKey();
+        var outputKey   = view.getOutputKey();
+        var keyDiff     = keys.indexOf(outputKey) - keys.indexOf(inputKey);
+
+        var inputSong   = view.getInputSong();
+        var lines = inputSong.split('\n');
+        
+        for (var i=0; i < lines.length; i++) {
+            if (lines[i].charAt(0) === '*')
+                lines[i] = self.convert(lines[i], keyDiff);
+        }
+        
+        view.displayResult(lines);
+        
+    };
+    
+    this.convert = function(line, keyDiff) {
+        
+        // Get rid of asterisk at start of line.
+        line = line.replace('*', ' ');
+        
+        // Create empty string we will use to store transposed
+        // line of chords in.
+        var newLine = '';
+        
+        // Loop for each character in our chords string...
+        for (var i=0; i < line.length; i++) {
+            
+            // Grab current character in chord string.
+            var c = line.charAt(i);
+            
+            // Grab location of this character in our keys array.
+            // Returns -1 if not found.
+            var cLoc = keys.indexOf(c);
+            
+            // If character is a key, do stuff to convert it...
+            if (cLoc != -1) {
+                
+                // If the next character is a '#', like in "F#m7"...
+                if (i+1 < line.length && line.charAt(i+1) == '#') {
+                    // Convert F# into appropriate output key.
+                    newLine += keys[(keys.indexOf(c+'#') + keyDiff) % 12];
+                    i++;
+                }
+                
+                // The next character is NOT a '#', like in "Fm7"
+                else
+                    // Convert F into appropriate output key.
+                    newLine += keys[(cLoc + keyDiff) % 12];  
+            }
+            
+            // Character is NOT a key, so just output it back out.
+            else 
+                newLine += line.charAt(i);
+        }
+        
+        // Return our transposed line of chords.
+        return newLine;
+    };
+        
+}
+
+
+function View() {
+    
+    this.getInputKey   = function() {
+        return $('#songKey option:selected').val();
+    };
+    
+    this.getOutputKey  = function() { 
+        return $('#outputKey option:selected').val() 
+    };
+    
+    this.getInputSong  = function() {
+        return $('#chords').val();
+    };
+    
+    this.displayResult = function(lines) {
+        
+        var song = '';
+        for (var i=0; i < lines.length; i++) {
+            song += lines[i] + '\n';
+        }
+        $('#song').text(song);
+    };
+}</xmp>
+                        </div>
+                    </li>
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                Default Song Key:
+                <select id="songKey">
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                </select>
+                
+<textarea id="chords">
+* F#m7   CM7   G  B  D#  C2
+  Roses are red, violets are blue
+* Dm E    A   Bmaj7
+  This is my song, yeah yeah yeah
+</textarea>
+                
+                
+                <hr>
+                
+                Output Key:
+                <select id="outputKey">
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                </select>
+                <input type="button" id="convert" value="Convert">
+                <pre id="song"></pre>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Explanation:</h2>
+            <p>
+                In this lesson you learned about the "this" keyword, the modulus % operator, got a ton more experience in using loops,
+                and got more hands-on experience avoiding spaghetti code by using a controller and a view. Furthermore we developed
+                our app by doing the initialization first, then the controller, and the view last, which was the opposite of what we
+                did in the previous lesson. You may or may not have felt a preference for one starting point over another.
+            </p>
+            <p>
+                One thing we didn't do
+                in this lesson is use a model, but you could certainly add one if you wanted. Remember how in our last lesson our
+                model defined a Person object and used a "persons" array? A similar thing could be done here by defining a "Song"
+                object, and the songs could be stored in a "songs" array. The Song object would need at a minimum the song's name,
+                its default key, and the lyrics w/ chords, but additional info could be added such as Author, Tempo, etc. The main
+                problem you would have is you'd probably want a box on the webpage you can select a song with, and you'd want a way
+                to enter new songs and save them to the model - and to do that stuff you'd want to modify the HTML. You could
+                certainly do it from your Javascript file using DOM manipulation, but it'd be easier to just create a new HTML page,
+                inport your Javascript into it, and start developing outside this lesson series.
+            </p>
+            <p>
+                However, lest you embark on a grand adventure to add a model without understanding the downside, just understand
+                that you'd still be limited by any non-hardcoded data being reset anytime you refresh the web page. To save data so it doesn't
+                disappear each time you load the page, you either have to use LocalStorage or save your data to a web server, which
+                you haven't learned yet.
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                This lesson wraps up our series on front-end Javascript. Of course there's always more you can learn on a topic,
+                but the next step in your journey into programming is to learn how to write code that runs on your computer outside
+                a web browser using Node.js (<a href="https://nodejs.org/en/">https://nodejs.org/en/</a>), how databases work,
+                how the HTTP protocol works that powers the internet, and how to write server side code that lets you create
+                powerful web based apps. 
+            </p>
+            <p>
+                This is only the beginning. You could be the one to write the next Facebook social networking
+                app or Angry Birds viral game. Your limit is your imagination. Don't give up, keep on learning!
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson7.html">&lt;&lt;&lt; Previous Lesson</a>
+        <!-- <a class="nextLesson" href="ltp_lesson9.html">Next Lesson &gt;&gt;&gt;</a> -->
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script src="resources/student/lesson8.js"></script>
+</body>
+</html>

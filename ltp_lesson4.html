@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #4</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #4</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To understand how to control basic logic flow within an application.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>
+                We're going to play with some numbers by pretending we know what three children are going to spend on their Mom's Christmas gift.
+            </p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>Open up "lesson4.js" from the "resources/student/" folder in your text editor. All the code you are instructed to write for this lesson
+                        should be saved into that .js file.    
+                        
+                        <p>
+                        Note: The HTML markup in the testing area for this lesson looks like this:
+<xmp class="prettyprint"><h2>Test Result Area:</h2>
+    
+<h3>If / Else Result #1:</h3>
+<div id="ifElse1"></div>
+    
+<h3>If / Else Result #2:</h3>
+<div id="ifElse2"></div>
+    
+<h3>If / Else Result #3:</h3>
+<div id="ifElse3"></div>
+    
+<h3>"For/In" Loop Result:</h3>
+<div id="forInLoop"></div>
+</xmp>
+                        </p>
+                    </li>
+                    <li>
+                        <h3>If / Else Statements</h3>
+                        First off, let's play with some IF/ELSE statements. They follow a very simple format and are one of the major building
+                        blocks in controlling the computer and making your app do useful things. The format is basically this:
+<pre class="prettyprint">
+if (condition is true) {
+    ... execute code ...
+}
+else {
+    ... execute some other code ...
+}
+</pre>
+                        <span class="note">Note: The "else" part is optional. You can leave it out if you don't need it.</span>
+                        <p>
+                        Let's pretend we have four siblings who each plan to spend a different amount on a Christmas gift for their Mom,
+                        and our computer can somehow read their minds. We want our app to give us the name of the sibling who plans to spend the most.
+                        Add all the following to your lesson4.js file. You can leave out the comments if you understand the logic without them.
+                        </p>
+<pre class="prettyprint">
+////////////////////////////////////////////////////
+// Data
+////////////////////////////////////////////////////
+
+// Amount the children intend to spend on Mom's Christmas gift in dollars.
+var child = {
+    matt : 45,
+    john : 20,
+    susan : 120
+};
+
+// The variable we'll hold the result string in.
+var result;
+
+////////////////////////////////////////////////////
+// If / Else Test #1
+////////////////////////////////////////////////////
+
+if (child.matt > child.john) {
+    // Matt intends to spend more than John. 
+    //Let's test if he will spend more than Susan.
+    
+    if (child.matt > child.susan) {
+        // Matt intends to spend more than both John and Susan. 
+        // Matt wins.
+        result = 'Matt intends to spend the most.';
+    }
+    else {
+        // Matt intends to spend more than John, but not more than Susan. 
+        // Susan wins.
+        result = 'Susan intends to spend the most.';
+    }
+}
+else {
+    // John intends to spend more than Matt. 
+    // Let's test if he will spend more than Susan.
+    
+    if (child.john > child.susan) {
+        // John intends to spend more than both Matt and Susan. 
+        // John Wins. 
+        result = 'John intends to spend the most.';
+    }
+    else {
+        // John intends to spend more than Matt, but not more than Susan. 
+        // Susan wins.
+        result = 'Susan intends to spend the most.';
+    }
+}
+
+// Update our Test Results area with result.
+$('#ifElse1').html( result );
+</pre>
+                        If you have that code added to your file and reload the page, you should see the correct result show up for if/else test #1.
+                        Feel free to change the values each child intends to spend, and verify that the result correctly changes to match.
+                        
+                        <p>
+                            Probably the most important thing to notice is that you can nest if/else statments inside each other. If the
+                            first IF statement evaluates to true, then we know Matt intends to spend more than John and can eliminate John
+                            as a canidate for highest spender. At that point we know either Matt or Susan intend to spend the most and can test
+                            them against each other to determine the final answer.
+                        </p>
+                    </li>
+                    <li>
+                        Let's repeat the same Christmas gift spending test we did above, but this time I want to show you another way to do the same
+                        thing. Add the following to your file below our first test:
+                        
+<pre class="prettyprint">
+////////////////////////////////////////////////////
+// If / Else Test #2
+////////////////////////////////////////////////////
+
+if (child.matt > child.john) {
+    // So we know at this point Matt will outspend John.
+    // Now we need to test if he'll outspend Susan.
+    if (child.matt > child.susan)
+        result = 'Matt intends to spend the most.';
+    else 
+        result = 'Susan intends to spend the most.';
+}
+else if (child.john > child.susan) {
+    // The first "IF" test failed, so we know John plans to spend 
+    // more than Matt. If the above "else if" condition is true, 
+    // then John also intends to outspend Susan. Thus:
+    result = 'John intends to spend the most.';
+}
+else {
+    // If we got to here, then we know the first "IF" failed,
+    // Thus John intends to outspend Matt.
+    // Also the "else if" failed, so we know
+    // Susan intends to outspend John. Thus:
+    result = 'Susan intends to spend the most.';  
+}
+
+// Update our Test Results area with result.
+$('#ifElse2').html( result );
+</pre>
+                    
+                        Reload the page and verify that this 2nd test gives the same result as the first. The new "else if" statement
+                        only gets tested if the first IF statement fails its condition. Using Else-Ifs allows us to "unroll" embedded 
+                        if/else statements which can sometimes help to keep code from getting too complex with multiple embedded blocks.
+                        See below for an example of what I'm talking about.
+                    </li>
+                    <li>
+                        Ok, let's say we want to find the kid that will spend the most using only if/else statements, but we don't
+                        want ANY embedded if/elses. Can we do it? The answer is "yes!" Add the following to your code below test #2:
+                        
+<pre class="prettyprint">
+////////////////////////////////////////////////////
+// If / Else Test #3
+////////////////////////////////////////////////////
+
+if (child.matt > child.john && child.matt > child.susan) {
+    result = 'Matt intends to spend the most.';
+}
+else if (child.john > child.susan && child.john > child.matt) {
+    result = 'John intends to spend the most.';
+}
+else {
+    result = 'Susan intends to spend the most.';  
+}
+
+// Update our Test Results area with result.
+$('#ifElse3').html( result );
+</pre>
+                    
+                        The "&&" operator allows you to connect different conditions and require them both to be true. So 
+                        "child.matt > child.john && child.matt > child.susan" only passes if Matt's number is larger than
+                        BOTH John and Susan. 
+                        
+                        <p>Note: If you were in a situation where you had code you wanted executed if
+                        EITHER of two statements were true, you could use the "||" operator like so:
+                        </p>
+<pre class="prettyprint">
+if (condition1 || condition2) {
+    // This code will execute if EITHER of the conditions above are true ...
+}
+</pre>
+                        Another commonly used operator is negation which is represented by an exclamation point "!".
+                        Anything preceeded by an exclamation is negated such that !True == False and True == !False.
+                        When using the negation operator it is often helpful to use extra parentheses to keep track
+                        of what you are negating.
+<pre class="prettyprint">
+// All 3 of the statements below are equal.
+if (  10 > 5     ); // TRUE
+if (  !(10 < 5)  ); // NOT(FALSE) == TRUE
+if (  !(5 > 10)  ); // NOT(FALSE) == TRUE 
+</pre>
+                        
+                        <h3>Final Thought on If/Else Tests:</h3>
+                        <p>It's worth noting that we aren't taking into account situations where there's a tie for
+                        biggest spender. Do you think you could modify the code to take ties into account? It's worth
+                        thinking about, but probably not doing as this example is impractical to begin with.</p>
+                        <p>
+                        Imagine if you were a business owner and you wanted to
+                        know which of your 3000 customers in the last month placed the biggest order... you can probably
+                        see that solving a question like that through if/else statements would be crazy.</p>
+                        
+                        <p>In extremely large data situations you'll actually want to use a sorting algorithm, but I'll
+                        show you how to use loops to obtain an answer in small to medium sized data sets in the steps below.
+                        </p>
+                    </li>
+                    <li>
+                        <h3>For/In Loop</h3>
+                        Time for our first loop! We'll use javascript's For/In loop to do our sibling spending test a little easier.
+                        Add the following to your code:
+                        
+ <xmp class="prettyprint">
+////////////////////////////////////////////////////
+// For/In Loop
+////////////////////////////////////////////////////
+
+var name;
+var biggestValue = 0;
+var biggestSpender;
+result = '';
+
+for (name in child) {
+    
+    result += name + ' intends to spend ' + child[name] + '<br>';
+    
+    if (child[name] == biggestValue)
+        biggestSpender += ' & ' + name;
+     
+    else if (child[name] > biggestValue) {
+        biggestSpender  = name;
+        biggestValue    = child[name];
+    }
+}
+result += 'The sibling(s) that intends to spend the most is ' +
+            biggestSpender;
+
+$('#forInLoop').html( result );
+ </xmp>                       
+                        <div class="explanation">
+                            <h3>Explanation:</h3>
+                            For/In loops allow you to iterate over an object's attributes. In this case, our "child" object's
+                            attributes are the names of the three kids, and each attribute's associated value is the money
+                            they intend to spend. Remember our Child object we are using looks like this:
+ 
+<pre class="prettyprint">
+var child = {
+    matt : 45,
+    john : 20,
+    susan : 120
+};
+</pre>
+                            On the first iteration of the "for (name in child)" loop, name will be equal to "matt", and the value
+                            of "child[name]" is the same as saying "child[matt]" which will return the value associated with the 
+                            attribute matt... in this case 45. The 2nd iteration of the loop, name will equal "john", and child[name]
+                            will return 20, etc.
+                            
+                            <p>
+                                It's worth noting that the "name" in "for (name in child)" is just an arbitrary variable that best 
+                                describes our object for this example. If we wanted we could say "for (x in child)" and then reference
+                                the value associated with each attribute using "child[x]", but that's just not as naturally descriptive
+                                of what we're doing. It's always best to try and use descriptive variable names that help a reader 
+                                understand what you're doing rather than generic "X" or the like.
+                            </p>
+<pre class="prettyprint">
+var name;
+var biggestValue = 0;
+var biggestSpender;
+result = '';
+</pre>
+                            <p>
+                                So taking a step back, let's talk about what we're doing at the top in our variable declaration area.
+                                "name" is the variable name we'll be iterating on in our loop, so we just declare it. Don't worry about
+                                understanding why we do that just yet, we'll go more into
+                                the "why" behind variable declarations in the next lesson when we talk about scope.
+                                Next we're declaring and setting a variable "biggestValue" to zero which we'll use to hold the largest value
+                                we find while running through our loop. Lastly, we're declaring a variable "biggestSpender" which we'll use
+                                to hold the name(s) of the kid who plans to spend the most and we're resetting "result" which we've been using
+                                in previous tests back to an empty string.
+                            </p>
+                            
+<xmp class="prettyprint">result += name + ' intends to spend ' + child[name] + '<br>';</xmp>                            
+                            <p>
+                                The thing I should probably explain about this statement is that the += operator appends whatever value
+                                follows to whatever is already existing in "result". I.E. If result had a value of "hello", and then I said
+                                <code>result += ' world';</code>
+                                Result would then hold a value of "hello world". Note: If result held a number, let's say 2, and I said "result += 3", 
+                                result would then hold a value of 5.
+                            </p>
+                            
+<pre class="prettyprint">
+if (child[name] == biggestValue)
+    biggestSpender += ' & ' + name;
+
+else if (child[name] > biggestValue) {
+    biggestSpender  = name;
+    biggestValue    = child[name];
+}
+</pre>
+                            <p>
+                                Alright, here's the meat of our loop and hopefully you can understand what it's doing just by looking at it. First we
+                                are checking if the amount a child intends to spend is identical to our current largest recorded amount.
+                                If they are equal, then the name of this child is appended to our biggestSpender string. If they are NOT equal,
+                                then we check if the new value is larger than our previously recorded largest (remember biggestValue is set to 0 to start).
+                                If it is larger, then we set biggestSpender to be the name of the current kid, and set biggestValue to be what
+                                they plan to spend.
+                            </p>
+                            <p>The final thing we do is update our results area, but you should be familiar with that by now, so I'll skip
+                            any explanation.</p>
+                        </div>
+                    </li>
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                
+                <h3>If / Else Result #1:</h3>
+                <div id="ifElse1"></div>
+                
+                <h3>If / Else Result #2:</h3>
+                <div id="ifElse2"></div>
+                
+                <h3>If / Else Result #3:</h3>
+                <div id="ifElse3"></div>
+                
+                <h3>"For/In" Loop Result:</h3>
+                <div id="forInLoop"></div>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Explanation:</h2>
+            <p>
+                If / Else statements are an important constuct available in essentially all programming languages. You also got 
+                your feet wet with loops in the For/In loop which is important for iterating over an object's properties.
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                Next we'll learn about some more general purpose loops that are common to most programming languages, and how
+                they are typically used.
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson3.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="ltp_lesson5.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script src="resources/student/lesson4.js"></script>
+</body>
+</html>

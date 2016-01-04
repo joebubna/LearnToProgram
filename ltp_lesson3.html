@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #3</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #3</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To understand functions and javascript event binding.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>We have two text boxes setup, one for entering your First name, and one for entering your Last name.
+            First, we are going to make it so the names entered in those boxes get combined into a Full name. Then we'll
+            see a really simple example of how we can use a Function to improve our code.</p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>A new javascript file has been included on this page in addition to jQuery! Open
+                        up "lesson3.js" from the "resources/student/" folder in your text editor - this is where you will be writing your
+                        code now instead of using the Console. All the code you are instructed to write for this lesson
+                        should be saved into that .js file. <br><br>
+                        Below is how your custom javascript file gets included on the web page.
+<xmp class="prettyprint"><body>
+    ... content here ...
+    ... content here ...
+    <script type="text/javascript" src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="resources/student/lesson3.js"></script>
+</body></xmp>
+                        
+                        <div class="hl">
+                        <h3>IMPORTANT!!!</h3>
+                        Just because you won't be writing your code in the console anymore DOES NOT mean you should stop opening it.
+                        When you run into errors that cause your code to not work, the console will usually tell you where to look
+                        for the error!!! This is SUPER useful as you WILL make typos, even when following this guide. There's also
+                        ways you can walk through your code's execution step-by-step using the "sources" tab in Chrome or "debugger" tab in 
+                        Microsoft Edge, but that's beyond the scope of this tutorial.
+                        </div>
+                    
+                    </li>
+                    <li>
+                        Before we get started with our Javascript code, take a look at the HTML we will be working with from this
+                        lesson's Testing Area:
+<xmp class="prettyprint"><div>First Name: <input type="text" id="firstName"></div>
+<div>Last Name: <input type="text" id="lastName"></div>
+<hr>
+<div>Fullname = <span id="fullName"></span></div></xmp>                       
+                    </li>
+                    <li>First, we want to setup our Javascript events that will cause our code to get executed. Events are
+                        things such as clicking something on the web page, moving the mouse over an area of the web page, pressing
+                        a key on the keyboard, etc. Since we want to "do something" when a user types into either the first or
+                        last name textboxes, we will use an event called "oninput".<br><br>
+                        
+                        Recall that in the last lesson we used the jQuery "append" function to modify the DOM like so:
+                        <code class="prettyprint"><xmp>$('#testing ol').append('<li>I ROCK!</li>');</xmp></code><br>
+                        
+                        To attach an event to a DOM item or items, we will use a similar format like this:
+<pre class="prettyprint">$('#firstName').on('input', function() {
+    ... <span class="nocode">code to execute when event triggers</span> ...
+});</pre>                        
+                        Type the above code into your lesson3.js file, then we'll fill in the center part later. See below for an explanation.
+                        
+                        <div class="explanation">
+                            <h3>Explanation:</h3>
+                            <ul>
+                                <li>
+                                    First, we use a jQuery selector - <span class="hl">$('#firstName')</span> - to select the DOM element we
+                                    want to attach an event to.
+                                </li>
+                                <li>
+                                    Second, we are calling the "on" function with the <span class="hl">.on()</span> code. This function creates
+                                    the event attachment, but we have to pass it additional information which in programming lingo are called
+                                    "parameters."<br><br>
+                                    
+                                    The parameters it requires from us are:<br><br>
+                                        <ol>
+                                            <li>The events we want to trigger our code on.</li>
+                                            <li>The code we want to execute when a trigger happens, which will be a function.</li>
+                                        </ol>
+                                    <span class="note">
+                                        Note: The actual values being passed into a function with parameters is referred
+                                        to as the "arguments." If you have a function that calculates a person's age when given their birth year, 
+                                        "birthYear" would be its parameter and "1985" might be the argument you pass it.</span>
+                                </li>
+                                <li>
+                                    Okay, now for the confusing part... the parameters between the "on" parenthesis. So as we just mentioned,
+                                    there's two arguments being passed. so it might be easy to understand to look at it this way:
+                                    <code>$('#firstName').on(<span class="hl">parameter1</span>, <span class="hl">parameter2</span>);</code>
+                                    WHERE
+                                    <code>parameter1 = 'input'</code>
+                                    AND
+<code>
+<xmp>parameter2 = function() {
+    ... code to execute ...
+}
+</xmp>                        
+</code>
+                                </li>
+                                <li>
+                                    Passing in the string "input" as the first parameter tells the function that the event we want to bind
+                                    to this DOM element is the oninput event. It's technically possible to pass multiple events seperated by
+                                    a space (e.g. 'input mouseover click keyup') but we don't need to do that for this example.
+                                </li>
+                                <li>
+                                    The second parameter is the doozey, and that's because we're passing in a whole function that we want to
+                                    execute when the event gets triggered. This is called an <span class="hl">anonymous function</span>. 
+                                    Don't worry if it confuses you right now, we'll start digging into functions in a bit. Hang in there!! :)
+                                </li>
+                            </ul>
+                        </div>
+                        
+                    </li>
+                    
+                    <li>
+                        Alright, let's fill in the code we want to execute when the event triggers. It's a pretty simple two lines, and you
+                        can probably figure out what it does right away. Add the following two lines to your code:
+<xmp class="prettyprint">var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+$('#fullName').text(fullname);
+</xmp>
+                        
+                        <p>
+                            We're constructing the person's full name by taking the text entered into the firstName box, adding a
+                            space, then adding ("concatonating" is technical term) the text in the lastName box. After we got
+                            the fullname, we then use jQuery's amazing simplicity to update the text in our fullName field on the page.
+                        </p>
+                        <p>Go ahead and reload this page after you've added the above to your lesson3.js file, then try typing something
+                        in the First Name box. Your code in your lesson3.js file should look like the below at this point:</p>
+<xmp class="prettyprint">$('#firstName').on('input', function() {
+    var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);
+});                    
+</xmp>
+                    </li>
+                    
+                    <li>
+                        Let's do the same thing for the lastName box. Add the following to your file:
+<xmp class="prettyprint">$('#lastName').on('input', function() {
+    var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);
+});                    
+</xmp>                        
+                        Now reload the page and test the results again. If you didn't make any typos, you should see
+                        the "Fullname" updating instantly when you start typing in either the first or last name boxes.
+                    </li>
+                    
+                    <li>
+                        One thing you may have noticed, is that our code is almost identical for both the firstName and lastName
+                        pieces. In-fact, the code we are executing when our events trigger is EXACTLY IDENTICAL!!!
+<pre>
+$('#firstName').on('input', function() {
+    <span class="hl">var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);</span>
+});
+
+$('#lastName').on('input', function() {
+    <span class="hl">var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);</span>
+});                    
+</pre>                         
+                        This is a PERFECT opportunity to pull that code out, and place it into a function. Functions serve
+                        as reusable blocks of code that help you keep your code clean and organized - reducing repitition
+                        by allowing you to execute it multiple times without writing it out each time.
+                    </li>
+                    <li>
+                        Below the code you've already written, add the following:
+<pre class="prettyprint">
+function outputName() {
+    var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);
+}
+</pre>
+                        <p>
+                            As you can see, it's pretty easy. You just declare that you're writting a function, give the function a name,
+                            declare any parameters you require between parenthesis (leave empty if no data is needed), and then finally
+                            write a block of code you want to execute by placing it between brackets {}.
+                        </p>
+                    </li>
+                    
+                    <li>
+                        Now that we have our code added to a function, go back and edit what we wrote earlier, replacing the repetitive
+                        code with calls to our function. The end result of your code for this project should look like this:
+<pre class="prettyprint">
+$('#firstName').on('input', function() {
+    outputName();
+});
+
+$('#lastName').on('input', function() {
+    outputName();
+});
+
+
+///////////////////////////////////////////////////////
+// Function(s)
+///////////////////////////////////////////////////////
+
+function outputName() {
+    var fullname = $('#firstName').val() + ' ' + $('#lastName').val();
+    $('#fullName').text(fullname);
+}
+</pre>              
+                    </li>
+                    
+                    <li>
+                        One quick last note: Now that we moved our repetitive code to the outputName function and all that's left
+                        to do when the event triggers is calling outputName() and nothing
+                        else, we could eliminate the anonymous function and just call outputName directly like so:
+<pre class="prettyprint">
+$('#firstName').on('input', outputName);
+$('#lastName').on('input', outputName);
+</pre>                        
+                    
+                    
+                    </li>
+                    
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                <div>First Name: <input type="text" id="firstName"></div>
+                <div>Last Name: <input type="text" id="lastName"></div>
+                <hr>
+                <div>Fullname = <span id="fullName"></span></div><br>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Summary:</h2>
+            <p>
+                Alright, you made it! That was a doozy of a lesson despite the simplicity of the end result. Things will slowly get
+                easier from here on out though; as you learn more of the programming fundamentals, we'll be able to focus less
+                on small details and more on the larger concepts of building cool stuff.
+            </p>
+            <p>
+                By completing this lesson you should now have a basic understanding of using jQuery to bind Javascript events to 
+                DOM elements, writing a simple function to reduce code repetition, and even some understanding of passing
+                functions as a parameter for another function! Phew!
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                Next up we'll learn about logic flow (if/else statements & loops).
+            </p>
+        </section>
+
+        <a class="nextLesson" href="intermission-2-3.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="ltp_lesson4.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script type="text/javascript" src="resources/student/lesson3.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #6</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #6</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To understand variable scope in Javascript.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>
+                There's no specific end-product for this lesson. Rather, you'll be observing the results of the code you'll be asked
+                to write in order to understand first hand how scope works.
+            </p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ul>
+                    <li>Open up "lesson6.js" from the "resources/student/" folder in your text editor. All the code you are instructed to write for this lesson
+                        should be saved into that .js file.    
+                        
+                        <p>
+                        Note: The HTML markup in the testing area for this lesson looks like this:
+<xmp class="prettyprint"><section id="testing">
+    <span class="wrap">
+        <h2>Test Result Area:</h2>
+        <h3>Test 1:</h3>
+        Variable "x" Value = <span id="ex1_varX"></span>
+
+        <h3>Test 2:</h3>
+        Variable "x" Value at point #1= <span id="ex2_varX1"></span><br>
+        Variable "x" Value at point #2 = <span id="ex2_varX2"></span>               
+
+        <h3>Test 3:</h3>
+        Variable "y" Value = <span id="ex3_varY"></span>
+        
+        <h3>Test 4:</h3>
+        Variable "x" Value = <span id="ex4_varX"></span>
+        
+        <h3>Test 5:</h3>
+        <div id="ex5"></div>
+
+        <h3>Test 6:</h3>
+        <div id="ex6_counter"></div>
+    </span>
+</section></xmp>
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Test #1:</h3>
+                        The first thing you need to know before we dig into this lesson is that functions can be written as what's called 
+                        Immediately-Invoked Function Expressions. Unlike normal functions which are defined somewhere in your code, and
+                        then invoked somewhere else by using the format "functionName()", these are functions that are immediately executed.
+                        
+                        <p>
+                            IIFE's use the format "(...define function between parenthesis...)()" which as you can see is very similar to how you'd
+                            normally call a function, only instead of naming a function defined somewhere else, you're defining some function
+                            between parenthesis and then immediately invoking it afterwards via "()". You'll see several examples of this shortly, 
+                            I just wanted to explain it beforehand so you aren't confused.
+                        </p>
+                        
+                        
+                        <p>
+                            The next thing I should probably explain upfront is that functions can be nested inside each other.
+                            It's very similar to how HTML elements can be nested. In the following example, &lt;div&gt; is a child of &lt;section&gt;
+                            and &lt;span&gt; is a direct child of &lt;div&gt; and a grandchild of &lt;section&gt;.
+                        </p>
+                        
+<xmp class="prettyprint"><section>
+    <div>
+        <span>Hello World</span>
+    </div>
+</section>
+</xmp>
+                        
+                        <p>
+                            Just like the nesting in the HTML example above, in the Javascript example below you'll see several IIFEs nested 
+                            inside each other. This is significant because in Javascript nested functions inherit the variables of their
+                            parents. Take a look at the code below and see if you can guess what the value of "x" will be:
+                        </p>
+                
+                        
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #1
+////////////////////////////////////////
+var x = 0;
+
+(function level1() {
+    x = 1; 
+    (function level2() {
+        x = 2;      
+        (function level3() {
+            x += 3;
+        })();       
+    })();   
+})();
+
+(function b() {
+    x += 2;
+})();
+
+$('#ex1_varX').text(x);
+</xmp>
+                        <p>
+                            If you input the above code into your js file and reload the page, you'll see that the value of "x" 
+                            for this first test is equal to 7. In the "global" scope, we set the value of x=0, then in the first
+                            function we change x's value to 1, then in the 2nd function we set x=2. In the 3rd function we increase
+                            the value of x by 3 bringing it's value to 5, and then in function "b" at the end we increase its value
+                            by another 2 for a total of 7.
+                        </p>
+                        
+                        <p>
+                            The important thing to see is that although we first declare x in the 
+                            <span class="hl">global scope (I.E. outside of any function)</span>,
+                            each of the functions inherit access to it and can change x's value.
+                        </p>
+                    </li>
+                    
+                    <li>
+                        <h3>Test #2:</h3>
+                        Take a look at the following code. Can you guess the value of x at the various points? Add this to your file
+                        below the first example to find out.
+                        
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #2
+////////////////////////////////////////
+var x = 0;
+(function outer() {
+    var x = 20;   
+    (function () {
+        x += 10;
+    })();    
+    $('#ex2_varX1').text(x); // POINT #1  
+})();
+
+$('#ex2_varX3').text(x); // POINT #2                   
+</xmp>
+                    
+                        <p>
+                            Did you guess right? Refresh the page after adding that code and check.
+                        </p>
+                        <p>
+                            The main thing to notice that's different in this example is the use of the "var" keyword
+                            in front of x in the first function. THIS IS IMPORTANT! That "var x = 20" statement declares a local variable
+                            named "x" that overrides the global x's value within that function and all its decendents. So that inner function
+                            inherits the value of x=20 from its parent rather than the global (grandparent level) value of x=0. That is
+                            why the value of x at Point #1 is 30. 
+                        </p>
+                        <p>
+                            At Point #2 the thing to notice is that the modifications we made to x within the functions only affect their
+                            local value and do NOT affect the exterior (global) value of variable x. Once Outer() is done executing, any local 
+                            variables it declared (such as its version of x) are destroyed.
+                        </p>
+                    </li>
+                    
+                    <li>
+                        <h3>Test #3:</h3>
+                        How about this example - can you guess the value of "y"? Add this to your code:
+
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #3
+////////////////////////////////////////
+var x = 2;
+(function () {
+    y = x; 
+})();      
+$('#ex3_varY').text(y);
+</xmp>
+                    
+                        <p>
+                            As you can see, if you guessed "2" as the value of y, you are correct. Now you might be be confused by this
+                            as we just got finished explaining that after a function is finished executing, all its local variables are destroyed.
+                            That being the case, how does y have a value since it was first declared inside the function and we're not using
+                            it until after the function is done??? The answer in this case is the lack of a "var" keyword in front of y.
+                            Because we left the "var" keyword off, the declaration "y = x" makes "y" a global variable!
+                        </p>
+                        
+                    </li>
+                    
+                    <li>
+                        <h3>Test #4:</h3>
+                        Can you correctly say which values x and y will have?
+                        
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #4
+////////////////////////////////////////
+var x = 0;
+var y = 15;
+mine();
+$('#ex4_varX').text(x);
+$('#ex4_varY').text(y);
+    
+function mine() {
+    x += 9;
+    var y = 7;
+}                      
+</xmp>
+                        <p>
+                            The main difference here is we're not using an Immediately-Invoked Function Expression, but rather just a normal
+                            function and function call. 
+                        </p>
+                    </li>
+                    
+                    <li>
+                        <h3>Test #5: Parameters</h3>
+                        <p>
+                            Next up, parameters! If you recall the lesson on functions, "parameters" are the variables you pass along to functions.
+                            They look like this:
+                        </p>
+<pre class="prettyprint">
+    function myFunction(parameter1, parameter2, ...) {
+    
+    }
+</pre>
+                        <p>
+                            There's a couple important things to know about how passing arguments into function parameters works. 
+                            Add the following to your code and observe the result:
+                        </p>
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #5
+////////////////////////////////////////
+myVar = 22;
+test( myVar );
+$('#ex5').append( myVar );
+
+function test(item) {
+    item = 5;
+    $('#ex5').html(item + '<br>');
+}                        
+</xmp>
+                        <p>
+                            Here we define a variable and assign a numerical value of 22 to it, after which we invoke our "test" function and pass
+                            our variable in as the argument. Inside test(), the parameter variable "item" will have the same value as "myVar".
+                            We then assign a new value to our parameter and output this new value to our testing results.
+                            Then after test() is done, we then add the current value of "myVar" to our testing area below the previous output
+                            from the function.
+                        </p>
+                        <p>
+                            What we want to know is: "Will
+                            changing the value of 'item' within the function also change the value of 'myVar' which was passed in as its value?"
+                            You should see in our testing results that the answer to this for now is "no". When passing in primitive data types
+                            such as a number or a string, you pass these variables in BY VALUE, meaning "item" has the same value as "myVar" but
+                            it's a distinctly different variable. As such, changing "item" in this scenario does not change the value of "myVar".
+                        </p>
+                        <p>
+                            Now modify the code you wrote above to match what's below and then reload the page:
+                        </p>
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #5
+////////////////////////////////////////
+myVar = [1,2,3];
+test( myVar );
+$('#ex5').append( myVar.toString() );
+
+function test(item) {
+    item[0] = 5;
+    $('#ex5').html(item.toString() + '<br>');
+}                        
+</xmp>
+                        <p>
+                            What we've done is change our "myVar" from a simple number to now being an array of numbers. We pass it in to our 
+                            test() function just like before, and then in the function we attempt to change the first value in the array.
+                            What you'll notice about the results of this experiement is that unlike before, now changes to "item" are also
+                            affecting "myVar"! This is because non-primitive data types such as arrays and objects are passed into functions
+                            BY REFERENCE. Under this scenario "item" is not a copy of "myVar" with the same value, but rather is a direct link
+                            to the memory location of myVar's data. So any changes made to the data inside the function will also affect
+                            the data outside the function too. This is a simple but important thing to remember!
+                        </p>
+                        <p class="note">
+                            Note: The ".toString" method we are calling on the array just converts the array into a string that we can output
+                            to our web page.
+                        </p>
+                    </li>
+                    
+                    <li>
+                        <h3>Test #6: Closures</h3>
+                        Switching gears just a little bit, there's an important concept in Javascript that's related to what we've been talking
+                        about called "closures." Remember how I stated earlier that local variables are destroyed after a function is finished
+                        executing? Also how I stated that a function has access to the variables of its ancestors? Closures allow us to bypass
+                        the destruction of variables we might want to hold onto by storing them in a parent function.
+                        
+                        <p>
+                            For example, let's say we want to make a counter. Our counter starts at a value of 0, and we have a function
+                            called increment() that increases the value by 1 each time it's called. Now we could store our "count" variable
+                            in the global scope to protect it from getting destroyed after increment() is done executing, but that adds clutter,
+                            opens the possibility that we might accidently change our counter elsewere in the code, and makes it so we'd have to 
+                            add count1, count2, count3, etc, if we wanted more than one counter. NO BUENO.
+                        </p>
+<xmp class="prettyprint">// Bad attempt at counter
+var counter1 = 0;
+var counter2 = 0;
+increment1 = function() {
+    counter1 += 1;
+}
+increment2 = function() {
+    counter2 += 1;
+}
+increment1() // counter1 now equals 1, etc.
+</xmp>
+                        <p>
+                            A better way is to use the concept of a closure. A closure is a function defined inside a parent function that has access
+                            to variables in that parent. This works to preserve our variables from getting destroyed because in Javascript functions
+                            remember the context in which they were defined, so even after they finish executing, the data in their parent will
+                            be preserved so it's available if we call the child function again. I realize that's a mouthful, but hang in there and
+                            take a look at the example below:
+                        </p>
+                        
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #6
+////////////////////////////////////////
+function Counter1() {
+    var count = 0;
+    this.increment = function() {
+        count += 1;
+    }
+    this.decrement = function() {
+        count -= 1;   
+    }
+    this.getValue = function() {
+        return count;   
+    }
+}
+
+// Create a counter
+var c1 = new Counter1();
+c1.increment(); // count = 1
+c1.increment(); // count = 2
+c1.increment(); // count = 3
+c1.decrement(); // count = 2
+
+// Create another counter
+var c2 = new Counter1();
+c2.increment(); // count = 1
+
+$('#ex6_counter').html(
+    'Counter #1 = ' + c1.getValue() + ', Variable = ' + c1.count + '<br>' +
+    'Counter #2 = ' + c2.getValue() + ', Variable = ' + c2.count + '<br>'
+);
+</xmp>                      
+                        <p>
+                            In the above example, increment(), decrement(), and getValue(), are all closures because they are inner functions
+                            that have access to their parent's "count" variable. This allows us to keep track of count's value between
+                            function calls. In this example we create two separate counters, do some increment/decrement calls on them,
+                            and then output the results to our testing area. 
+                        </p>
+                        <p>
+                            To get the value of our counters we are calling their getValue()
+                            method, but then after that we try to access the "count" varible in each counter directly by calling "c1.count", etc.
+                            You should see a result value of "undefined" for our attempt at accessing the count variable directly. This is because
+                            although child functions inherit access to the variable scope of their parent, the same does not work in reverse. 
+                        </p>
+                        <p>
+                            You
+                            cannot normally access local variables defined in a child function from the parent's scope. "count" is defined
+                            as a variable within the Counter1 function, so we CANNOT access that varible from the global scope (outside of any 
+                            function). This provides us with what's known in the programming world as Private Variables. To read that private
+                            variable we either have to use a closure method like getValue() that exposes the variable to us, or we expose it 
+                            directly by defining it as "this.count = 0;".
+                        </p>
+                        <div class="timeout">
+                            <h3>Important Definition: Object Constructor</h3>
+                            <p>
+                                I want to pause our discussion on Closures to quickly interject an important definition. In the above counter example
+                                the Counter1 function is what's called an "<span class="hl">Object Constructor</span>" in Javascript. 
+                                An Object Constructor is a function
+                                specifically designed to make objects (such as our counters). By convention constructors have their first
+                                letter capitalized to designate them as a constructor so they don't get confused with a regular function.
+                            </p>
+                            <p>
+                                Furthermore, the closure functions in our example (increment, decrement, getValue) are not normally called
+                                Closures or Functions when included as part of an object constructor like you see above.
+                                Programmers will commonly refer to these functions that are members of objects as "<span class="hl">Methods</span>".
+                                So to recap that, functions designed to create objects are capitalized and called Object Constructors, and the
+                                closure functions belonging to a constructor function are called Methods. Just remember that.
+                            </p>
+                        </div>
+                        <p>
+                            Alright, so you hopefully have a basic understanding of what a closure is now and why it might be useful. As the 
+                            old saying goes though - there's multiple ways to skin a cat - and Javascript is no exception. If you wish to 
+                            learn more about additional closure formats you might see other programmers use and an alternative called prototypes, 
+                            click the button below.
+                        </p>
+                        <div class="explore" id="moreClosures">
+                            <p>Edit your Example 6 code to match the following, we're going to add two more ways of doing a counter:</p>
+                        
+<xmp class="prettyprint">////////////////////////////////////////
+// Example #6
+////////////////////////////////////////
+
+function Counter1() {
+    var count = 0;
+    this.increment = function() {
+        count += 1;
+    }
+    this.decrement = function() {
+        count -= 1;   
+    }
+    this.getValue = function() {
+        return count;   
+    }
+}
+
+function counter2() {
+    var count = 0;
+    function increment() {
+        count += 1;
+    }
+    function decrement() {
+        count -= 1;   
+    }
+    function getValue() {
+        return count;   
+    }
+    return {
+        increment : increment,
+        decrement : decrement,
+        getValue : getValue
+    };
+}
+
+function Counter3() {
+    this._count = 0;   
+}
+Counter3.prototype.increment = function () {
+    this._count += 1;  
+};
+Counter3.prototype.decrement = function () {
+    this._count -= 1;   
+}
+Counter3.prototype.getValue = function () {
+    return this._count;   
+}
+
+// Test
+c1 = new Counter1();
+c2 = counter2();
+c3 = new Counter3();
+
+c1.increment();
+c2.increment();
+c3.increment();
+
+$('#ex6_counter').html(
+    'Counter #1 = ' + c1.getValue() + ', Variable = ' + c1.count + '<br>' +
+    'Counter #2 = ' + c2.getValue() + ', Variable = ' + c2.count + '<br>' + 
+    'Counter #3 = ' + c3.getValue() + ', Variable = ' + c3._count + '<br>'
+);
+                        
+</xmp>
+                        <p>
+                            In addition to our first counter which we've already used, we added two new versions of counter, namely
+                            counter2 and Counter3. Counter1 we implemented as an object constructor where we create new instances of
+                            it by using the "new" keyword. Counter3 is also a constructor and as such we capitalize the
+                            first letter of both by convention. counter2 is just a fancy function for using closures, and so does not
+                            have its letter capitalized.           
+                        </p>
+
+                        <p>
+                            counter2 should look pretty straight forward to you. The only tricky part being the return statement. Unlike
+                            our constructor functions that expose data members (variables and methods) via the "this" keyword, counter2
+                            returns an object that exposes access to the internal functions. Recall that data objects are composed of 
+                            "property : value" pairs in Javascript. In this case the "value" returned is not a number or string like
+                            you'd normally expect, but rather a reference to the closure functions and the "property" is being named
+                            the same as the function for convenience's sake. If you still don't quite get it, examine the object
+                            below for another example and then go back and look at counter2 again:
+                        </p>
+<pre class="prettyprint">
+function exampleFunctionOfSuperAwesomeness() {
+    return 42;
+}
+
+var myObject = {
+    myAge : 30,
+    myFunction : exampleFunctionOfSuperAwesomeness
+};
+
+myObject.myAge; // Returns 30
+myObject.myFunction(); // Returns 42
+</pre>
+                        <p>
+                            Counter3 is very similar to Counter1, but instead implements it's methods via prototype definitions
+                            NOT closures.
+                            In Counter1 each object created from it has its own versions of increment, decrement, and getValue (even 
+                            if they are identical). This uses some extra computer resources. 
+                            By defining the methods as prototypes, this means all objects created from
+                            Counter3 by default share the same methods. In older browsers the use of prototypes is significantly faster
+                            than using closures, although modern browsers are optimized such that the differences are minimal.
+                            The main thing to notice here is that "this._count" is NOT a private variable! You can't use private variables
+                            with prototypes. Instead, programmers by convention use an underscore to denote variables they want to treat
+                            like private ones.
+                        </p>
+                        <p>
+                            I realize this whole example 6 section probably seems very abstract, and don't worry if you still have some 
+                            confusion. As long as you understand what was happening in Counter1 and that we can use closures to preserve
+                            variable values between function calls, you're golden! The additional examples were just to expose you to 
+                            some other ways of doing things so you aren't clueless if you run into code written by other programmers
+                            that use one of those alternate formats.
+                        </p>
+                        <p class="note">
+                            To see performance differences between closures and prototypes see: 
+                            <a href="http://jsperf.com/prototype-vs-closures/20">Various Modern Tests</a> and
+                            <a href="http://blogs.msdn.com/b/kristoffer/archive/2007/02/13/javascript-prototype-versus-closure-execution-speed.aspx">
+                            Older Browser Performance</a>.
+                        </p>
+                        <p>
+                            
+                        </p>
+                        </div>
+                    </li>
+                </ul>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                <h3>Test 1:</h3>
+                Variable "x" Value = <span id="ex1_varX"></span>
+                
+                <h3>Test 2:</h3>
+                Variable "x" Value at point #1= <span id="ex2_varX1"></span><br>
+                Variable "x" Value at point #2 = <span id="ex2_varX2"></span>
+                
+                <h3>Test 3:</h3>
+                Variable "y" Value = <span id="ex3_varY"></span>
+                
+                <h3>Test 4:</h3>
+                Variable "x" Value = <span id="ex4_varX"></span><br>
+                Variable "x" Value = <span id="ex4_varY"></span>
+                
+                <h3>Test 5:</h3>
+                <div id="ex5"></div>
+                
+                <h3>Test 6:</h3>
+                <div id="ex6_counter"></div>
+                                
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Explanation:</h2>
+            <p>
+                I've heard it said that to understand variable scope is to understand Javascript. Although this lesson wasn't
+                the most exciting in the world, understanding how variable scope works is going to save you from a lot of
+                confusion in the future.
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                A programming concept called "Separation of Concerns" 
+                and some limitations to front-end javascript code.
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson5.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="ltp_lesson7.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script src="resources/student/lesson6.js"></script>
+</body>
+</html>

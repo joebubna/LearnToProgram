@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #1</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #1</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To use Javascript for the first time to manipulate a web page. Specifically, we're going to add a 4th item to the
+            list in the Test Result Area.</p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>Hit F12 to open developer tools.</li>
+                    <li>Go to the "Console" tab.</li>
+                    <li>
+                        Create an &lt;li&gt; object by typing the following into the console:<br/>
+                        <code class="prettyprint">var liNode = document.createElement("LI");</code>
+                    </li>
+                    <li>
+                        Create a Text node by typing:<br/>
+                        <code class="prettyprint">var textNode = document.createTextNode("I ROCK!");</code>
+                    </li>
+                    <li>
+                        Attach the Text node to the LI node by typing:<br/>
+                        <code class="prettyprint">liNode.appendChild(textNode);</code>
+                        This is creating the DOM (Web Browser representation of a web page) equivalent of the HTML:
+                        <xmp class="prettyprint"><li>I ROCK!</li></xmp>
+                    </li>
+                    <li>Now let's add our new list item to the end of the Test Area list. Type:
+                        <code class="prettyprint">document.getElementById('testing').children[1].children[1].appendChild(liNode);</code>
+                        This first grabs the "testing" section of the document, then the 2nd child element in that section "&lt;span&gt;."
+                        It then grabs the 2nd child element under &lt;span&gt; which in this case is our ordered list &lt;ol&gt;. Then 
+                        appends our newly created list element to the bottom.
+
+<xmp class="prettyprint"><section id="testing">
+    <div id="bar"></div>
+    <span>
+        <h2>Testing Result Area:</h2>
+        <ol>
+            <li>...</li>
+            <li>...</li>
+        </ol>
+    </span>
+</section>
+</xmp>
+                    </li>
+
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                <ol>
+                    <li>Item 1</li>
+                    <li>Item 2</li>
+                    <li>Item 3</li>
+                </ol>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Explanation:</h2>
+            <p>Since text on a page means nothing to a computer, Web browsers convert the HTML text into a data model representation.
+                This underlying representation of the web page is called the DOM (Document Object Model). 
+                Think of HTML as the "blueprints" that tell a web browser HOW to construct a page, and
+                the DOM as the actual finished product after the web page has been constructed.
+            </p>
+
+            <p>Javascript lets you alter the DOM which opens up the door for all sorts of cool possibilities.</p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                This is fairly arduous just to add an extra item to a list. Especially if you have to type it out each time,
+                wouldn't you agree? Do not fear! There are easier ways to manipulate the DOM, this lesson was just about
+                helping you understand how the DOM is separate from the HTML, but also how it follows the parent/child/sibling relationships
+                that indented HTML code shows.
+            </p>
+            <p>
+                
+                Next we'll learn how to do this task in an easier way by utilizing the power of the 
+                Javascript library "jQuery".
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson2.html">Go to Next Lesson</a>
+        
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+</body>
+</html>

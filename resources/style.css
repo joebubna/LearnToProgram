@@ -1,0 +1,276 @@
+/* COLORS */
+body {
+    background: #183E5F;
+    color: white;
+}
+
+a {
+    color: yellowgreen;
+} 
+
+img.inlineImg {
+    background-color: black;   
+}
+
+h1 {
+    color: yellow;   
+}
+
+h2 {
+    color: #6CFD26;   
+}
+
+h3 {
+    color: darkorange;   
+}
+
+code, pre, xmp {   
+    background: #333;
+}
+
+div.explanation {
+    border-color: darkorange;
+}
+
+div.explore {
+    border-color: darkorange;
+}
+
+div.timeout {
+    border-color: darkorange;
+}
+
+#steps .hl {
+    color: orange;
+}
+
+#testing .hl {
+    color: yellow;   
+}
+
+#testing {
+    background: #333;
+}
+
+#testing #bar {
+    background: rgb(219, 230, 46);;
+}
+
+.nextLesson {
+    color: white;
+    background: #42921B;
+    border-color: #84BF83;
+}
+
+    .nextLesson:hover {
+        background: white;  
+        color: black;
+    }
+
+.exploreFurther {
+    color: white;
+    background: #42921B;
+    border-color: #84BF83;
+}
+
+    .exploreFurther:hover {
+        background: white;  
+        color: black;
+    }
+
+table {
+    border-color: grey;
+}
+
+table td {
+    border-color: grey;
+    background-color: black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Other Styling */
+
+body {
+    font-family: "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+    line-height: 22.5px;
+}
+
+li {
+    margin-bottom: 0.7em;
+}
+
+#testing h3 {
+    margin-bottom: 5px;   
+}
+
+img.inlineImg {
+    margin: 1em;   
+    padding: 6px;
+}
+
+code, xmp, pre {
+    display: block;
+    padding: 5px;
+    margin: 3px 3px 1em 3px;
+}
+
+code {   
+    word-wrap: break-word;
+}
+
+code xmp {
+    margin: 0;
+    padding: 0;
+}
+
+.note {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+div.explanation {
+    border-left-style: solid;
+    border-left-width: 1px;
+    margin-left: 1em;
+    padding-left: 1em;
+    font-size: 1em;
+}
+
+div.explore {
+    border-top-style: solid;
+    border-top-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: none;
+}
+
+div.timeout {
+    border-top-style: solid;
+    border-top-width: 2px;
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+#content {
+    margin: 1.5em; 
+    max-width: 800px;
+}
+
+#steps span.wrap {
+    display: block;
+    padding-right: 1em;
+    padding-bottom: 1em;
+}
+
+#testing span span {
+    display: inline;
+    padding: 0;
+}
+
+#steps .hl {
+    display: inline;
+    padding: 0;
+}
+
+#steps {
+    display: block;   
+    max-width: 800px;
+}
+
+#testing {
+    display: block;
+    float: right;
+    width: 520px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+
+#testing #bar {
+    display: block;
+    float: left;
+    width: 20px;
+    position: fixed;
+    top: 0;
+    height: 100%;
+}
+
+#testing span.wrap {
+    display: block;
+    padding: 1em 1em 1em 2em;
+}
+
+#explanation {
+    clear: both;
+}
+
+.nextLesson, .exploreFurther {
+    display: inline-block;
+    padding: 12px;
+    margin: 10px 10px 10px 0;
+    border-width: 1px;
+    border-style: solid;
+    text-decoration: none;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+
+html, body, #full {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#full {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+#intro {
+    display: table-cell;
+    width: 500px;
+    height: 300px;
+    text-align: center;
+    vertical-align: middle;
+    
+}
+
+table {
+    border-width: 1px;
+    border-style: solid;
+}
+
+table td {
+    border-width: 1px;
+    border-style: solid;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    height: 250px;
+}

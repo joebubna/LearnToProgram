@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #7</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #7</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To understand the concept of "separation of concerns", and front-end code limitations.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>
+                We're going to create a simple little guessing game. A user will try to guess the "secret" number
+                by entering a number in the box, and then hitting the button to check whether they guessed correctly or not.
+            </p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ul>
+                    <li>Open up "lesson7.js" from the "resources/student/" folder in your text editor. All the code you are instructed to write for this lesson
+                        should be saved into that .js file.    
+                        
+                        <p>
+                        Note: The HTML markup in the testing area for this lesson looks like this:
+<xmp class="prettyprint"><section id="testing">
+    <div id="bar"></div>
+    <span class="wrap">
+        <h2>Test Result Area:</h2>
+        Select a person, then try and guess their secret number.<br>
+        <select id="person">
+
+        </select>
+        <input id="number" type="number">
+        <input id="guessButton" type="button" value="Check Guess">
+        <hr>
+        <div>Guess Result: <span id="guessResult"></span></div>
+    </span>
+</section></xmp>
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Separation of Concerns and MVC:</h3>
+                        Alright, before we start any coding for this lesson, we need to talk about what's known in the programming world
+                        as "spaghetti code." Spaghetti code results when a programmer doesn't understand Separation of Concerns and writes
+                        code that is all mashed and tangled together. Look at the following example:
+<xmp class="prettyprint"><input id="username" type="text">    
+<script>
+    $('#username').on('change', checkValidName);
+    function checkValidName() {
+        if ( nameBlackList.indexOf( $('#username').val() ) != -1 )
+            $('#warning').text('<b>The entered name is not valid!</b>');
+        else
+            $('#warning').text('<i>Name is acceptable.</i>');
+    }
+</script>
+<input id="password" type="password">
+</xmp>
+                        <p>
+                            Now at first glance you might be thinking this doesn't look so bad, it's pretty simple right? You have an input
+                            box for a username, some code that checks if a name entered is on a list of unacceptable names, and then a password
+                            box. What's wrong with this example is that the logic code (the act of checking if a name is valid) is getting
+                            directly mixed together with the view code (what's displayed to a user). Having 
+                            &lt;script&gt; tags mixed between HTML tags is generally a bad idea, and also grabbing values from the HTML page using
+                            jQuery from within the checkValidName() function is a bad idea too.
+                        </p>
+                        <p>
+                            Imagine you are working on a project with tens of thousands of lines of code, all written like the above with HTML
+                            and programming mixed together, and then your boss approaches you and says he wants a mobile version of the app
+                            that uses custom XML tags instead of HTML. WHAAA OHHH! Or maybe this is 5 years in the future and HTML has been replaced by 
+                            something called Super Awesome Markup Language, either way, hopefully you are starting to get the point. The logic
+                            behind your application is seperate from the display medium that is presented to the user. You should be able
+                            to change the "look" of your app without having to rewrite the entire application from scratch. Having
+                            your code's logic mixed together with your app's method of displaying stuff to the user (called the "View") is
+                            not a recipe for success. It will quickly turn into a tangled mess that will make any future modifications near
+                            impossible without rewriting the whole codebase.
+                        </p>
+                        
+                        <p>
+                            Instead, what you want is good Separation of Concerns. These concerns are often divided into 3 general categories:
+                            <ul>
+                                <li>Controllers (controls an application's execution, aka the "logic")</li>
+                                <li>Views (what's presented to a user, aka the "look" of an app)</li>
+                                <li>Models (the organization of the data within your app)</li>
+                            </ul>
+                            Together these are referred to as the popular "MVC"
+                            (Model-View-Controller) style of development. In this lesson you'll get your first taste of using an MVC implementation,
+                            and it should be clearer how this works by the time you finish. However, for now let me give you the somewhat 
+                            confusing description of it in action. Don't worry if the next few paragraphs don't make 100% sense right now, it'll
+                            be easier to understand later after you've done it.
+                        </p>
+                        <p>
+                            Under an MVC setup you will need at least one main controller. This main controller dictates how your app should run, 
+                            and will hand over the reigns to other controllers as necessary that perform specialized tasks. A popular 
+                            example of a controller found across many apps is a "User" controller. While your main controller may contain the 
+                            logic that makes your application run, whenever a user wants to make a new account, login, reset their password, etc,
+                            the "User" controller will be called and handle all of that. Why? Separating the logic that runs your main app from
+                            the logic that handles user management into different controllers is yet another example of separation of concerns.
+                            If you were to make the next Twitter and Facebook, the logic that runs each app might be vastly different, but the
+                            act of registering a new user, logging in, etc, is going to be mostly the same. So by grouping all your
+                            logic for controlling users into a "User" controller, you are creating a reusable object you can use anytime you
+                            make a new project that needs user management! Yay for not reinventing the wheel!
+                        </p>
+                        <p>
+                            Ok, so we've established your app may have different controllers that control (no pun intended) different parts of
+                            your app. So what about Views and Models, how do they fit in? In short, pretty simply. A controller will use
+                            your model to grab data (usually fetched from a database), and then use the View to display stuff to the user.
+                            Let's go back to our "User" controller example and pretend you are trying to login. The first thing you'll probably
+                            see is a standard login form that asks for your username and password. You enter these and submit it to the application.
+                            On the backend, the username and password are sent to the "login" method of your "User" controller. The User controller
+                            then asks the Model to search the database list of users to see if there is actually an existing user with that
+                            username+password combination. If yes, then the User controller logs you in and calls the View to show you your homepage.
+                            If not, then the controller asks the View to show you the login page again with a warning that you entered an invalid
+                            username and password. The important thing to remember is that it all revolves around the controller. The controller
+                            asks for data and then decides what to do with it, the controller calls the View to display stuff to the user, the 
+                            controller is in command.
+                        </p>
+                        <p>
+                            <span class="note">
+                                Note: Within each of the MVC layers there is often further sub-breakdowns
+                                of separation too. For example, within the View layer for web applications it's common to use HTML to markup the content, 
+                                CSS to style the HTML, and Javascript to control interactivity. To break that down even further - 
+                                HTML is then often separated into a "template" and the main content for the page.
+                            </span>
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Adding Data (our simulated database):</h3>
+                        Phew! Ok, now that we got that long winded explanation out of the way, let's start digging our fingers into this MVC
+                        concept with this lesson's exercise. Copy and paste the following into your lesson7.js file then see the description
+                        below:
+                        
+<xmp class="prettyprint">///////////////////////////////////////////////////////
+// Data
+///////////////////////////////////////////////////////
+
+function Db() {
+    
+    this.users = [
+        {
+            id : 1,
+            name: 'Ryan',
+            age: 33,
+            email: 'ryan1337@gmail.com',
+            preferred_language: 'English'
+        },
+        {
+            id: 2,
+            name: 'Andrea',
+            age: 28,
+            email: 'AndreaTheAmazing@gmail.com',
+            preferred_language: 'English'
+        },
+        {
+            id: 3,
+            name: 'Jose',
+            age: 44,
+            email: 'JoseGonzoles@gmail.com',
+            preferred_language: 'Spanish'
+        }
+    ];
+    
+    this.gameData = [
+        {
+            id: 1,
+            secretNum: 78
+        },
+        {
+            id: 2,
+            secretNum: 22
+        },
+        {
+            id: 3,
+            secretNum: 11
+        }
+    ];
+    
+    this.languagesSupported = [ 'English', 'Spanish' ];
+}                      
+</xmp>
+                    
+                        <p>
+                            What we're doing with this DB constructor is we'll be creating an object from it to simulate a database.
+                            In it we have a "users" array that holds objects representing user data, and then we also have a "gameData"
+                            array of objects that simulates user data specific to our game. You can tell which secret number belongs
+                            to which user by matching the ids. The matching of the ids in the database world is called a "relation"
+                            and is the concept behind relational databases. Just file that tidbit away for future reference.
+                        </p>
+                        <p>
+                            Next up let's add our Model:    
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Add Model:</h3>
+<xmp class="prettyprint">///////////////////////////////////////////////////////
+// Model
+///////////////////////////////////////////////////////
+
+function Model(db) {
+    
+    this.Person = function(id, name, secretNumber, lang) {
+        this.id             = id;
+        this.name           = name; 
+        this.secretNumber   = secretNumber;
+        this.lang           = lang;
+    };
+    
+    this.persons = [];
+    
+    /////////////////////
+    // METHODS
+    /////////////////////
+    
+    /**
+     * Load data from the database into the model.
+     */
+    this.load = function() {
+        // Load data from Db into Model 
+        for (var i=0, len = db.users.length; i < len; i++) {
+
+            // For each user in the database, grab the data we need to create a "Person" object for them.
+            var userId          = db.users[i].id;
+            var userName        = db.users[i].name;
+            var userLanguage    = db.users[i].preferred_language;
+            var secretNumberMatches = $.grep(db.gameData, function(userGameData){ 
+                                            return userGameData.id == db.users[i].id; 
+                                        });
+            var secretNumber = secretNumberMatches[0].secretNum;
+
+            // Create a new person
+            var somePerson = new this.Person(userId, userName, secretNumber, userLanguage);
+
+            // Add that person to the list of people
+            this.persons.push( somePerson );
+        }
+    };
+}                    
+</xmp>
+                        <p>
+                            The most important part of the model is actually the easiest bit at the top where we define a "person" object
+                            and a create an empty "persons" array. Basically, we're telling our app "this is what a person looks like" and
+                            letting our app know we are going to need a list (technically an array) of these persons.
+                            This is a simplified version of how models are normally defined.
+                        </p>
+                        <p>
+                            The "load" function under the methods section does important stuff, but normally developers use frameworks
+                            that handle the specifics of how the model interacts with the database for you. This allows you to query
+                            the model for data without worrying about how it's grabbing it. For our little simulation here though we don't
+                            have that luxury, so we are defining this load method to grab data from our database object and convert it into
+                            the Person objects and "persons" list we want to use in our app.
+                        </p>
+                        <p>
+                            The load() function starts with a For loop that iterates over the users in our db. The one tricky bit here is
+                            we're defining two variables in our "setupStatement" by using a comma. Recall that For loops look like this:
+                        </p>
+<pre class="prettyprint">
+for ( setupStatement; loopCondition; postLoopStatement ) {
+    // Stuff to execute each time the loop is run.
+}
+</pre>
+                        <p>
+                            In our setupStatement saying: <code class="prettyprint">var i=0, len = db.users.length;</code> is the same as saying:
+                        </p>
+<pre class="prettyprint">
+var i = 0;
+var len = db.users.length;
+</pre>
+                        <p>
+                            We're just combining two variable declarations together. This might also be a good time to note that using
+                            the comma format is a slight performance increase, so some developers out there prefer declaring their variables
+                            that way all the time.
+                        </p>
+                        <p>
+                            Within our loop we then grab the name, id, and language of the current user we are iterating over, and call
+                            a function in jQuery called "grep" to grab the user's secret number. Below is my simplified explanation of it from
+                            the official jQuery documentation:
+                        </p>
+                        <div class="explanation">
+                            The $.grep() method removes items from an array as necessary so that all remaining items pass a provided test. 
+                            The test is a function that is passed an array item. Only if the test returns true will the item be in the result array.    
+                        </div>                     
+                        <p>
+                            Previously I had an explanation written here for grep(), but the fact is, to adequately explain it 
+                            would be too long a divergence from the main topic. 
+                            What you need to know is 
+                            <span class="hl">
+                                it allows us to "match" the ids from our users array to the ids in our gameData array 
+                                and grab each persons' secretNumber
+                            </span>.
+                            Bada bing, bada boom. Most of the time in real scenarios you'll have an actual database that can handle associations
+                            for you, so you won't have to use a function like grep().
+                        </p>
+                        <p>
+                            If you want the kinda sorta explanation of it:
+                            Basically we are passing grep() the userData 
+                            array that stores our secret numbers as its first argument and then our
+                            comparison function as its second argument. For each userData array item we are checking if its id matches our current
+                            user via "userGameData.id == db.users[i].id". If
+                            that comparison is true, then that userData array item is added to the array the grep() function will return back to us.
+                        </p>
+                        <p>
+                            When all is said and done, that comparison should only be true once per person , so grep() will return back to us
+                            an array called "secretItemMatches" with a single item in it. To get the actual secret number, we have to access
+                            the first (and only) result of the array by "secretItemMatches[0]" and then grab the secret number.
+                        </p>
+                        <p>
+                            I fully realize the grep() function might be confusing, and we could take more time to explain it better, but
+                            it's really not important to this lesson so let's move on.
+                        </p>
+                        <p>
+                            The final bit from our loop that should be mostly self explanatory is we're creating a new Person object with the 
+                            data we've gathered and then we're adding that person to the list of persons in our model.
+                        </p>
+                        
+                    </li>
+                    <li>
+                        <h3>Add View:</h3>
+                        <p>
+                            Tracking with me ok so far? Right now in your codefile should be our DB function that holds our data, and a Model
+                            function that defines what a Person is, has an array of persons, and then a load function to populate the persons 
+                            array. Next up let's add in our View (the part of our app that will interact with the user):
+                        </p>
+                        
+<xmp class="prettyprint">///////////////////////////////////////////////////////
+// View
+///////////////////////////////////////////////////////
+
+function View() {
+    
+    this.loadPersons = function() {       
+        var options = '';
+        var len = model.persons.length;
+        for (var i=0; i < len; i++) {
+            options +=  "<option value='" + i + "'>" +
+                            model.persons[i].name + 
+                        '</option>';
+        }
+        $('#person').html( options );
+        
+    };
+    
+    this.getNumber = function() {
+        return $('#number').val();
+    };
+    
+    this.getPerson = function() {
+        return $('#person option:selected').val();
+    };
+    
+    this.displayResult = function(result) {
+        $('#guessResult').text( result );  
+    };
+    
+}                    
+</xmp>
+                        <p>
+                            Our View has four methods in it. Three of them are pretty self-explanitory, but let's go over loadPersons().
+                            Basically we're using a For loop to iterate over our "model.persons" array and for each person in our array
+                            we are adding a drop down "&lt;option&gt;" html element to our Select list on our web page. The option's text
+                            is the person's name and the option's value is their position in the persons array. It's also notable that we
+                            are waiting to update the DOM until we have all our options ready. Accessing the DOM is slow, so you always want
+                            to try and avoid having DOM manipulation in a loop. For example, the following would work, but would be less optimal:
+                        </p>
+<xmp class="prettyprint">
+this.loadPersons = function() {       
+    var len = model.persons.length;
+    for (var i=0; i < len; i++) {
+        $('#person').append("<option value='" + i + "'>" + model.persons[i].name + '</option>');
+    }
+};  
+</xmp>
+                    
+                    </li>
+                    <li>
+                        <h3>Add Language Localization:</h3>
+                        <p>
+                            Next add our language constructor. We'll be using this to add language localization to our little app.
+                            As is probably obvious, we're specifying some phrases we need to use in our app and giving the translations
+                            for those phrases in both English and Spanish. If we wanted to expand this in the future, you could add
+                            more languages.
+                        </p>
+<xmp class="prettyprint">function Language() {
+    
+    this.english = {
+        correct :   'Correct!',
+        incorrect : 'Sorry, guess again!',
+        notANumber : 'You must enter a number!'
+    };
+    
+    this.spanish = {
+        correct :   '¡Correcto!',
+        incorrect : 'Lo sentimos , piénselo otra vez!',
+        notANumber : 'Debe ingresar un número!'
+    };
+    
+}                     
+</xmp>
+                    </li>
+    
+                    <li>
+                        <h3>Add Controller:</h3>
+                        Ok, so we have our Model, we have our View, we have our little Language constructor, what part of MVC are we missing?
+                        Ah yes, the all important Controller! Add the following to your code:
+                        
+<xmp class="prettyprint">///////////////////////////////////////////////////////
+// Controller
+///////////////////////////////////////////////////////
+
+function Controller() {
+    
+    this.guess = function() {
+        
+        var person = view.getPerson();
+        var number = view.getNumber();
+        var personLang = model.persons[person].lang.toLowerCase();
+        var result;       
+        
+        if ( !$.isNumeric(number) ) {
+            result = lang[personLang].notANumber;
+        }
+        else {
+            if (number == model.persons[person].secretNumber) {
+                result = lang[personLang].correct;
+            }
+            else {
+                result = lang[personLang].incorrect;   
+            }
+        }
+        view.displayResult( result );
+    };
+    
+}</xmp>
+                        <p>
+                            Since our little game is super simple, we actually only have one method in our controller - that being guess().
+                            This method is what will be called anytime someone clicks the "Take Guess" button. In it, we're asking
+                            our View to grab two things from the user, the person who's number they are trying to guess, and the actual
+                            number our user is guessing is the secret number. It's worth noting that how the View gets this info is of 
+                            no consequence to our controller! Yes, we know that our View is using jQuery to get the info from the form fields
+                            in our testing area, but for all our controller knows the View could be interpretting vocal responses from
+                            the user. The controller doesn't know, and doesn't care, so long as the View supplies the requested info. This
+                            is what's great about separation of concerns - we could completely change how our app interacts with the user 
+                            and all we'd have to modify is our View!
+                        </p>
+                        <p>
+                            After we get the person and guessed number, we then are grabbing the person's local language from our model. Remember
+                            that "view.getPerson()" is actually returning a number - specifically the offset of that person in the "persons" array.
+                            As such, when we say "model.persons[person].lang" we're selecting a specific person from the persons array in the
+                            model like "model.persons[0]" and then selecting that Person's "lang" property. The final variable "result" is just
+                            a string we'll use to store our feedback to the user on whether their guess was correct or not.
+                        </p>
+                        <p>
+                            Now to the actual logic part, we are first using a jQuery isNumeric() function to check if the input provided to us
+                            by the user is actually a number. While not actually necessary here, being distrustful of any input you receive from
+                            a user is generally a smart mentality to possess! A large number of security flaws in applications are the result of
+                            the developers not properly anticipating how a malicious user might try to abuse their software, and properly sanitizing
+                            any input they receive from the user. In front-end Javascript (code running in a web browser) verifying user input
+                            is mostly just for user convenience and to save server resources - I.E. checking that you filled out all the required
+                            fields in a form before submitting it, etc - the reason being that any front-end checks can be bypassed by the user.
+                            However, when writing backend server code or developing desktop apps, you'll always want to be warry of using input!
+                            An entire article could be written on this topic, but for now just accept that I'm trying to get you in the habit of
+                            checking input from the user. 
+                        </p>
+                        <p>
+                            In this case, if the user does not enter a number we are calling our language "lang" 
+                            object, then the language that corresponds to our selected person, and finally the phrase for "notANumber". If the 
+                            selected person speaks English, then the call will evaluate to this:
+                            <code>lang['english'].notANumber</code>
+                            and will return "You must enter a number!". Take a look at the lang object again and make sure you understand how we're
+                            grabbing that phrase. Pretty neat huh? Using our little language localization feature is as simple at that! Whenever
+                            we want to say something to the user, we ask our lang object for the correct phrase in the person's language!
+                        </p>
+                        <p>
+                            Assuming the user entered a number and we got past that first IF check, the next thing we do is check if the number
+                            the user entered matches the actual secret number for that person. To do that we have to grab the selected person's
+                            secret number from the Model. Just like in the variable declaration section at the top where we grab the person's 
+                            language, we use the same process to grab their secret number. We access the model, then the model's "persons" array,
+                            then the offset of our "person" within that array, then grab the data we are looking for.
+                            <code class="prettyprint">number == model.persons[person].secretNumber</code>
+                        </p>
+                        <p>
+                            The last thing we do in our controller is ask the View to display to the user the result of their guess.
+                        </p>
+                    </li>
+    
+                    <li>
+                        <h3>Tying it all together (making our code work):</h3>
+                        <p>
+                            At this point you should have your Model, View, Controller, and Language class in your code file, but if you save
+                            and refresh the web page, you should notice that clicking the Guess button still doesn't do anything. This is because
+                            we haven't written the code that creates our objects and causes the button to trigger our controller yet. jQuery provides
+                            an easy way to execute code after the web page has finished loading, so we'll use that to create all our stuff and tie
+                            everything together. Add the following to your code:
+                        </p>
+                        
+<xmp class="prettyprint">$(function() {
+    
+    // Variables
+    db          = new Db();
+    model       = new Model(db);
+    view        = new View();
+    controller  = new Controller();
+    lang        = new Language();
+    
+    // Populate Model
+    model.load();
+    
+    // Populate persons field
+    view.loadPersons();
+    
+    // Event Bindings
+    $('#guessButton').on('click', controller.guess);
+    
+});                     
+</xmp>
+                    
+                        <p>
+                            From this you should recognize the familiar $() symbol that calls jQuery. If you're paying close attention you might also
+                            recognize that we're passing a function as an argument to jQuery. The important part is obviously the code we are having
+                            executed though. The first thing we are doing is creating objects from all the constructor functions we wrote. Notice
+                            we left off the "var" keyword, so all our objects are being created in the Global scope - meaning they can be accessed from
+                            anywhere in our code. Next we call the Model's "load" method to populate it with data from our simulated database (DB) object.
+                            So now our model has data in it. Then we call on our View to load the &lt;Select&gt; box in our testing area with 
+                            &lt;options&gt; cooresponding to our persons by calling "loadPersons()". And last, but not least, we use jQuery's "on"
+                            function to bind a "click" event to our button so that the button calls the Controller's "guess" method each time it's
+                            clicked. Save and reload after adding this code and your little game should be working!
+                        </p>
+                    </li>
+                    <li>
+                        <h3>Limitations of Front-End code:</h3>
+                        If using Google's Chrome browser, hit F12 and go to the "Sources" tab. Then navigate the files in the left pane until
+                        you open your lesson7.js file under Resources/Student. Scroll down in the javascript file until you get to the DB
+                        constructor where we store the secret numbers used in our guessing game. The point being, front-end code is fully visible
+                        to the user, and can be bypassed! You can't have secret numbers or passwords. You can't have security that isn't
+                        bypassable. Anything that needs to stay secret, or anything that needs to remain un-bypassable (such as the code to "login"
+                        to a website) must be implemented on the server side where the user can't see it or bypass it!
+                        
+                        <p>
+                            If you are using other browsers such as Firefox, IE, Edge, etc, you can view the code embedded on the web page there too,
+                            although the method of accessing it might be slightly different.
+                        </p>
+                    </li>
+                    <li><h3>Alternate Model Formats:</h3>
+                        <p>
+                            I just want to quickly mention that in practice you will see models that have differing formats from what I've
+                            described in this lesson. The important concept that is always true though is that a Model is an abstraction
+                            layer over the data. To maintain separation of concerns you never want to access your data directly from a
+                            controller, but instead always through a Model. Just like a View allows you to not have to search through
+                            thousands of lines of code to update things anytime you need to change the "look" of your app, a Model
+                            prevents you from having to dig through thousands of lines of code anytime you need to change the medium
+                            from which you are getting your data.                        
+                        </p>    
+                        <p>
+                            Pretend you work at a company that has an app that saves data in text files on the computer. The way you
+                            grab data from the text files is via the function: 
+                            <code>fileRead('dataName')</code>
+                            You use that function hundreds of times thoughout thousands of lines of code across many different code files.
+                        </p>
+                        <p>
+                            Then your boss comes to you and says he wants to transition the app over to use XYZ Database instead of files.
+                            XYZ Database's method of grabbing data is:
+                            <code>xyzFetch('dataName')</code>
+                            Uhh ohhh! Now you have to dig through all those thousands of lines of code in all the different files and find
+                            all the spots with fileRead() and replace them with xyzFetch()!
+                        </p>
+                        <p>
+                            After much annoying work of playing hide and seek to find all the spots you needed to replace the function call,
+                            including months of bug squashing as more hidden calls to the old system are discovered... your boss comes to you
+                            the next year and says that cloud computing compatible ABC Database is the new hotness and he wants you to 
+                            transition the app to use it. It uses:
+                            <code>abcQuery('dataName')</code>
+                            GGAAAAAARRRRRR!!! [much pulling out of hair]
+                        </p>
+                        <p>
+                            By using a model you can bypass this headache and keep your logic insulated from changes to the data medium.
+                            For this example you could replace all your data calls with:
+                            <code>model.find('dataName')</code>
+                            And then the next time your boss asks you to change the data storage technology, all you'd have to do is
+                            update the model.find() method so it knows how to access the new data structure.
+                        </p>
+                    </li>
+                </ul>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                Select a person, then try and guess their secret number.<br>
+                <select id="person">
+                    
+                </select>
+                <input id="number" type="text">
+                <input id="guessButton" type="button" value="Check Guess">
+                <hr>
+                <div>Guess Result: <span id="guessResult"></span></div>
+            </span>
+        </section>
+
+        <section id="explanation">
+            <h2>Lesson Explanation:</h2>
+            <p>
+                In this lesson we separated our app's data, look, and logic into separate objects by utilizing what's known as the MVC
+                development philosophy. To recap what we did in this lesson we:
+            </p>
+            <ul>
+                <li>
+                    Created an object constructor function to simulate data from a database. We did this with the understanding that
+                    normally we'd be getting our data from a real database on a server or using HTML 5's Local Storage feature,
+                    and that this is just for learning purposes.
+                </li>
+                <li>
+                    Created an object constructor function to represent our Model. This Model defined the data we needed for our app into
+                    objects (such as a "Person") and grabbed this data from our simulated database.
+                </li>
+                <li>
+                    Created an object constructor function to represent our View. This View is used to interact with the end-user by displaying
+                    and retrieving data. Anything specific to the way our app "looks" and interacts with the outside world is
+                    handled by this View.
+                </li>
+                <li>
+                    Created an object constructor function to represent our Language Localization. This Language definition is used within
+                    our app to have phrases automatically displayed in different languages depending on a person's local language.
+                </li>
+                <li>
+                    Created an object constructor function to represent our Controller. This Controller acts like the "brain" of our app and
+                    is used to handle the execution flow. The Controller retrieves data from the user via the View and from the database
+                    via the Model and then decides what to do with that data.
+                </li>
+                <li>
+                    And finally we wrote some code that executes on page-load that creates objects from our constructors for us to use,
+                    does some initial setup tasks, and binds our Guess button to call our controller on click.
+                </li>
+            </ul>
+            <p>
+                By separating the different parts of our app into distinct areas we help avoid the spaghetti code problem and ensure
+                our code looks nice, can be modified easily in the future, and plays well when writing apps as part of a team of developers.
+            </p>            
+            
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                As a final exercise to wrap up our lessons on front-end Javascript we'll do something a little more practical and create
+                an app that transposes songs to different keys.
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson6.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="ltp_lesson8.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script src="resources/student/lesson7.js"></script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Learn Programming Fast: Lession #5</title>
+    <link rel="stylesheet" type="text/css" href="resources/style.css">
+    <link type="text/css" rel="stylesheet" href="google-code-prettify/desert.css">
+</head>
+
+<body onload="prettyPrint()">
+
+    <div id="content">
+        <h1>Learning to Program: Lesson #5</h1>
+
+        <section id="goal">
+            <h2>Goal:</h2>
+            <p>To further understand how to control logic flow within an application by using For and While loops.</p>
+        </section>
+        
+        <section id="exercise">
+            <h2>Exercise:</h2>
+            <p>
+                First we're going to iterate over an array to pick out the largest number by using a FOR loop, then we're
+                going to pretend to build a little game using a WHILE loop.
+            </p>
+        </section>
+
+        <section id="steps">
+            <span class="wrap">
+                <h2>Steps:</h2>
+                <ol>
+                    <li>Open up "lesson5.js" from the "resources/student/" folder in your text editor. All the code you are instructed to write for this lesson
+                        should be saved into that .js file.    
+                        
+                        <p>
+                            Note: The HTML markup in the testing area for this lesson looks like this, where the table is a 5x5 
+                            (5 rows, each with 5 columns):
+                        </p>
+<xmp class="prettyprint"><h2>Test Result Area:</h2>
+
+<h3>"For" Loop Result:</h3>
+<div id="forLoop"></div>
+
+<h3>"While" Loop Result:</h3>
+<div id="map">
+    <table>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+</div>
+<div id="whileLoop"></div>
+</xmp>
+                        
+                    </li>
+                    <li>
+                        Add the following to lesson5.js and see the explanation below:
+<pre class="prettyprint">
+//////////////////////////////////////////////
+// For Loop Example
+//////////////////////////////////////////////
+
+var numList = [23, 45, 11, 73, 31, 42, 17, 14, 97, 66, 58, 90, 79, 12, 4];
+var largest = 0;
+
+for (var i=0; i < numList.length; i++) {
+    if (numList[i] > largest)
+        largest = numList[i];
+}
+
+$('#forLoop').text( largest );
+</pre>
+                        <div class="explanation">
+                            <h3>Arrays:</h3>
+                            Let's talk first about the array "numList". In the last lesson you saw how Javascript objects can hold Key => Value
+                            pairs which we could then access by using the form "child.matt" or "child[matt]". Arrays are similar, except there's no key
+                            (aka "attribute") to reference - an array is just a straight up list of items.
+                            
+                            <div class="explanation">
+                            <p>
+                                Note: An Array could be a list of numbers (like in numList above), strings, and even objects! See below for an example
+                                of an array of objects:
+                            </p>
+<pre class="prettyprint">
+objArray =  [   
+                {firstName: Josiah, lastName: Bubna}, 
+                {firstName: Ryan, lastName: Johnson},
+                {firstName: Rick, lastName: Rollings}
+            ];
+</pre>
+                            </div>
+                            <p>
+                                To access items in an array, you need to know the item's "offset" from the front of the list. For example:
+                                numList[0] will return the item with an offset of "0" from the front, meaning it will return the first list item
+                                which in this case is 23. numList[5] will return the item 5 slots from the front, which will be 42. IMPORTANT:
+                                Notice that numList[5] actually returns the 6th item in the list, NOT the 5th! This is because we start counting
+                                offsets at zero.
+                            </p>
+                            <h3>For Loop:</h3>
+                            <p>
+                                Next up we have our "For" loop. "For" loops use the following format:
+                            </p>
+<pre class="prettyprint">
+for ( setupStatement; loopCondition; postLoopStatement ) {
+    // Stuff to execute each time the loop is run.
+}
+</pre>
+                                The "setupStatement" is only executed once before the first iteration of the loop, and is typically used to 
+                                declare any variables you need to make the loop work. In our case we are declaring a variable "i" which
+                                we will be able to use in our loop. On the first iteration of the loop "i" will be equal to 0, on the 2nd
+                                iteration "i" will be equal to 1, 3rd it will be equal to 2, and so forth. You'll understand why in just a sec.
+                            
+                            <p>
+                                The "loopCondition" is an expression like we use in our If/Else statements that evaluates to true or false.
+                                If it evaluates to true, then we run the loop code. If it evaluates to false, then we exit the loop
+                                and continue on in the program. This expression is checked each time through the loop.
+                            </p>
+                            <p>
+                                In our example, we are 
+                                running the loop for as long as the variable "i" is less than the length of numList, and numList has a total
+                                of 15 items in it. This means that on the last time through the loop, "i" will have a value of 14 (the next
+                                time it tries to run it will test if "15 &lt; numList.length" which is FALSE). Remember how I warned you
+                                that we start counting offsets at zero, and so numList[5] is actually the 6th item in the list? That principle
+                                works the same here, so numList[14] refers to the 15th (and LAST) item in the list.
+                            </p>
+                            <p>
+                                It's worth mentioning that some people find using 
+                                <code class="prettyprint">for (var i=1; i &lt;= numList.length; i++)</code> to be less confusing when learning
+                                programming as "i" then starts at a value of 1 the first time through the loop, and ends with a value of 15 
+                                (notice the less-than-or-equal operator) the 15th time through the loop. The slight problem with that setup
+                                is you have to access the array using numList[i-1] since the first item in the array is at numList[0] and
+                                the last item (in our example) is at numList[14].
+                            </p>
+                            <p>
+                                Finally we have our "postLoopStatement" which is "i++". "i++" is just shorthand for incrementing "i" by 1.
+                                So if "i" equals 3, then after i++ is run, "i" will then be equal to 4. It's the same as saying "i = i + 1"
+                                or "i += 1". This statement is run each time after our loop completes, and is how "i" goes from being equal
+                                to 0 the first time through our loop to being equal to 14 the last time through.
+                            </p>
+                        </div>
+                    </li>
+                    <li>
+                        <h3>While Loop:</h3>
+                        While loops are usually used when you want to repeatedly do something, and don't care about having an increment i variable.
+                        A common usage would be the main application loop within a program as we'll use in our little demo below.
+                        
+                        <div class="note">
+                            <p>
+                            It's worth noting that While and For loops are fully interchangeable... 
+                            anything you can do with one, you can do with the other -
+                            but that's beyond the scope of this tutorial.
+                            </p>
+                        </div>
+                        <p>
+                            Add the following to your code file, then we'll walk through and explain it:
+                        </p>
+<xmp class="prettyprint">
+//////////////////////////////////////////////
+// While Loop Example
+//////////////////////////////////////////////
+
+var command = '';
+var mapWidth = $('#map tr:eq(0) td').length;
+var mapHeight = $('#map tr').length;
+
+var player = {
+    name: 'Bob',
+    x : 0,
+    y : 0
+};
+
+function play() {
+    // Reset command variable
+    command = '';
+    
+    // Position player at starting point
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'black');
+    player.x = 0;
+    player.y = 0;
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'blue');
+    
+    // Start main game loop
+    while (command != 'quit') {
+        command = prompt('Please enter a command:');
+
+        if (command == 'up')
+            move(player.x, player.y - 1);
+        else if (command == 'down')
+            move(player.x, player.y + 1);
+        else if (command == 'left')
+            move(player.x - 1, player.y);
+        else if (command == 'right')
+            move(player.x + 1, player.y);
+    }
+}
+
+function move(x,y) {   
+    // Prevent player from going off the map.
+    if (x < 0)
+        x = 0;
+    if (x >= mapWidth)
+        x = mapWidth-1;
+    if (y < 0)
+        y = 0;
+    if (y >= mapHeight)
+        y = mapHeight-1; 
+    
+    // Change background color of player's previous position back to default black.
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('background', 'black');
+    
+    // Update background of player's new position to show that the player is there.
+    $('#map tr:eq(' + y + ') td:eq(' + x + ')').css('background', 'blue');
+    
+    // Update player's location in player object
+    player.x = x;
+    player.y = y;
+}
+</xmp>
+                        <h3>Explanation:</h3>
+                        <div class="explanation">
+                            First up, we have our variable declarations at the top:
+    
+<xmp class="prettyprint">var command = '';
+var mapWidth = $('#map tr:eq(0) td').length;
+var mapHeight = $('#map tr').length;
+
+var player = {
+    name: 'Bob',
+    x : 0,
+    y : 0
+};    
+</xmp>
+                        
+                        
+                            <ul>
+                                <li>"command" will be used to store whatever the user types when we prompt them for a game command.</li>
+                                <li>"mapWidth" and "mapHeight" correspond to the size of the "map" table we are using as our gameboard.</li>
+                                    <ul>
+                                        <li>For "mapWidth" we are using jQuery selectors to grab all the columns in the first row of the table,
+                                            and then using the "length" property in jQuery to find out how many columns exist (aka how wide our
+                                            gameboard is in terms of mapsquares).
+                                        </li>
+                                        <li>For "mapHeight" we are using jQuery to grab all the rows of our map table and similarly using the "length"
+                                            property to determine how many rows there are (aka how tall our gameboard is).
+                                        </li>
+                                    </ul>
+                                <li>
+                                    The "player" object just keeps track of our player's name and his position on the gameboard. If we wanted
+                                    to expand this demo in the future into a real game, the player object might hold things like "# of health
+                                    potions", "weapon level", "armor level", inventory array, etc.
+                                </li>
+                            </ul>
+                            
+                            <p>
+                                Next up we have our play() function which the "play" button in the testing area calls when pressed:
+                            </p>
+
+<pre class="prettyprint">
+function play() {
+    // Reset command variable back to blank
+    command = '';
+    
+    // Position player at starting point
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'black');
+    player.x = 0;
+    player.y = 0;
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'blue');
+    
+    // Start main game loop
+    while (command != 'quit') {
+        command = prompt('Please enter a command:');
+
+        if (command == 'up')
+            move(player.x, player.y - 1);
+        else if (command == 'down')
+            move(player.x, player.y + 1);
+        else if (command == 'left')
+            move(player.x - 1, player.y);
+        else if (command == 'right')
+            move(player.x + 1, player.y);
+    }
+}                            
+</pre>                            
+                            Alright, the first thing that needs to be understood is how our "gameboard" table works for this demo.
+                            The top left mapsquare is coordinate [0,0], the top right mapsquare is [0,4], bottom right is [4,4], etc,
+                            when written in [y,x] form.
+                            If having the top-left be position [0,0] seems confusing to you (as opposed to the bottom-left), 
+                            just understand that's because the DOM is traversed top to bottom, so the first &lt;tr&gt; encountered in the HTML code 
+                            is row 0.
+                            
+                            <div class="note">
+                                <p>
+                                    Note: Make sure you test the demo out by clicking the "play" button if you haven't already!
+                                </p>
+                            </div>
+                            
+                            <p>
+                                Once you understand that, we can now walk through what's happening here at the start.
+                                Let's pretend a player used the demo and moved their character to position [2,2]. This player then decides
+                                they want to start over and hits the "play" button again to reset the game. At this point, what needs to happen
+                                is the lit up background color that represents the player's position at square [2,2] needs to be turned back
+                                to black, and then the mapsquare at [0,0] needs to be lit up again as that is the default starting location.
+                                To do that we're selecting one of the mapsquares (a &lt;td&gt;) with jQuery, then using the "css" method to 
+                                change the background color.
+                            </p>
+                            <p>Using our example where a player decides to start over after being at mapsquare [2,2], the first line of code
+                            will evaluate to this once the variables are resolved and the strings concatonated:</p>
+                            <pre class="prettyprint">$('#map tr:eq(2) td:eq(2)').css('backgroundColor', 'black');</pre>
+                            Now if we said $('#map tr td'), this would select all DOM &lt;td&gt; elements that are children of the tag with
+                            an id of "map" in the HTML and would return 25 results. 
+                            If we said $('#map tr:eq(0) td'), this would restrict that selection to &lt;td&gt; 
+                            elements that are a child of the first &lt;tr&gt; (aka the first row) and so would return 5 results. 
+                            By saying $('#map tr:eq(2) td:eq(2)')
+                            we are restricting our selection to a single DOM element. Namely, the 3rd &lt;td&gt; element that is a
+                            child of the 3rd &lt;tr&gt;.
+                            
+                            <p>
+                                So that code would select the player's previous position before they decided to reset, and turn that mapsquare
+                                black, then move the player back to [0,0] and then turn that mapsquare blue.
+                            </p>
+                            
+                            <p>
+                                Right after that initial setup, the main game loop starts, which is thankfully less confusing.
+                                In it we say in layman's terms: "While the command given by the player does not equal 'quit', keep looping through
+                                the following code." We then call the prompt() function which gives the player the pop-up box and store
+                                the response in our "command" variable. From there we just run through some If / Else statements to see if the
+                                command given matches any our game accepts, and if there's a match, then we call a function called "move()"
+                                which will handle moving the player around the game board. We are also passing the move() function two arguments
+                                representing the desired X and Y location of the mapsquare to which the player wants to move.
+                            </p>                           
+<xmp class="prettyprint">
+function move(x,y) {   
+    // Prevent player from going off the map.
+    if (x < 0)
+        x = 0;
+    if (x >= mapWidth)
+        x = mapWidth-1;
+    if (y < 0)
+        y = 0;
+    if (y >= mapHeight)
+        y = mapHeight-1; 
+    
+    // Change background color of player's previous position back to default black.
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('background', 'black');
+    
+    // Update background of player's new position to show that the player is there.
+    $('#map tr:eq(' + y + ') td:eq(' + x + ')').css('background', 'blue');
+    
+    // Update player's location in player object
+    player.x = x;
+    player.y = y;
+}                          
+</xmp>
+                            <p>
+                                Finally, in the move() function we are first checking that the coordinates the player wants to move to
+                                are valid (I.E. Not off the gameboard). Then we are doing the same thing we had to do when resetting the game board -
+                                changing the player's previous position back to black, and their new position to blue. Then lastly we
+                                are updating our player object with their new coordinates.
+                            </p>
+                        </div>
+                    </li>
+                </ol>
+            </span>
+        </section>
+
+
+        <section id="testing">
+            <div id="bar"></div>
+            <span class="wrap">
+                <h2>Test Result Area:</h2>
+                
+                <h3>"For" Loop Result:</h3>
+                <div id="forLoop"></div>
+                
+                <h3>"While" Loop Result:</h3>
+                Once code is implemented, hit the button below to start playing. <span class="hl">Type "quit" to stop the game.</span>
+                Type up, down, left, or right to move your character around the game board.
+                <p>
+                    <input type="button" value="Play!" onClick="play();">
+                </p>
+                <div id="map">
+                    <table>
+                        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                        <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                    </table>
+                </div>
+                <div id="whileLoop"></div>
+            </span>
+        </section>
+                        
+        <section>
+            <h2>Further Map Tinkering:</h2>
+            <div>If you want to learn how to move the character around our map using the keyboard arrow keys, click the button below.</div>
+            
+            <div class="explore" id="keyboard">
+            
+            Now that we've done the "While" loop for the sake of learning, I want to explain that front-end Javascript 
+            running in a browser doesn't need to run in a continuous loop like we made it do. A much better method
+            of accomplishing what we did is to use Event triggers. If you feel like playing with the map demo some more,
+            rename your current play() function to play2() and add the following to your code. See if you can figure out
+            how to make the player move when the Arrow keys are pressed on the keyboard. You'll need to replace the question
+            marks in the If / Else statements and then uncomment that code.
+            
+<xmp class="prettyprint">function play() {
+    // Position player at starting point
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'black');
+    player.x = 0;
+    player.y = 0;
+    $('#map tr:eq(' + player.y + ') td:eq(' + player.x + ')').css('backgroundColor', 'blue');
+    
+    // Register a keypress event handler
+    $( document ).on('keydown', function(keyboardEvent) {
+        
+        // Grab keycode pressed
+        var command = keyboardEvent.which;
+    
+        alert('The keycode of the key pressed is: ' + command);
+        
+        /*
+        // Execute Keyboard command if applicable
+        if (command == ??)
+            move(player.x, player.y - 1); // UP
+        else if (command == ??)
+            move(player.x, player.y + 1); // DOWN
+        else if (command == ??)
+            move(player.x - 1, player.y); // LEFT
+        else if (command == ??)
+            move(player.x + 1, player.y); // RIGHT
+        else
+            // Exit this function early if the key pressed was NOT an Arrow key.
+            // We don't want to prevent the normal behavior on other keys.
+            return true;      
+        
+        // Prevent Arrow key default scrolling behavior
+        keyboardEvent.preventDefault();
+        */
+    });
+    
+}           
+</xmp>
+            </div>
+        </section>
+
+        <section id="explanation">
+            <h2>Summary:</h2>
+            <p>
+                Whenever you need to do a repetitive task such as executing some code multiple times, loops are going to be your main
+                way of accomplishing it. "For" loops are generally used to iterate over arrays or perform a task a set number of times,
+                and "While" loops are generally used when you want to loop an indefinite amount, such as until a user decides to quit your
+                program.
+            </p>
+        </section>
+
+        <section id="next">
+            <h2>What's next?</h2>
+            <p>
+                Next we're going to learn about the important concept of variable scope.
+            </p>
+        </section>
+
+        <a class="nextLesson" href="ltp_lesson4.html">&lt;&lt;&lt; Previous Lesson</a>
+        <a class="nextLesson" href="ltp_lesson6.html">Next Lesson &gt;&gt;&gt;</a>
+    
+        <p>Copyright &copy; 2016 Josiah Bubna.</p>
+    </div>
+
+    <script src="resources/jQuery-2.1.4.js"></script>
+    <script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+    <script src="resources/teachingUI.js"></script>
+    <script src="resources/student/lesson5.js"></script>
+</body>
+</html>
