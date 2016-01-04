@@ -53,8 +53,9 @@
                             $('#testing ol') tells jQuery to grab any &lt;ol&gt; elements that are children of #testing.
                             Notice that in this case, &lt;ol&gt; is not a direct child of &lt;section id="testing"&gt;,
                             but rather a grandchild, with the direct parent being &lt;span&gt;.
-<xmp class="prettyprint"><section id="testing">
-    <span>
+<xmp class="prettyprint"><section id="testing">   
+    <div id="bar"></div>
+    <span class="wrap">
         <h2>Test Result Area:</h2>
         <ol>
             <li>Item 1</li>
@@ -92,7 +93,29 @@ liNode.appendChild(textNode);
 document.getElementById('testing').children[1].children[1].appendChild(liNode);
 </xmp>
                     </li>
-
+                    <li>
+                        <h3>jQuery vs. Native Javascript:</h3>
+                        Alright, now lest I get angry hate mail from Javascript experts, I need to clarify that there IS an easier
+                        way to do what we did using native Javascript. The reason I had you do it the hard way is to gain an understanding
+                        of what's going on under the surface with nodes, and to gain experience traversing the DOM tree. You can verify
+                        that the following easier native Javascript also works:
+                        <xmp class="prettyprint">document.querySelector('#testing ol').innerHTML += '<li>I Really Rock!</li>';</xmp>
+                        Be aware it doesn't use the same selector syntax as jQuery, but instead uses CSS selectors (reference 
+                        <a href="http://www.w3schools.com/cssref/css_selectors.asp">here</a>).
+                        
+                        <p>
+                            HOWEVER, this native code is still not as powerful as what jQuery provides us. Execute the following two lines of
+                            code and observe the result when we try to modify multiple list items at once:<br>
+                            jQuery:
+                            <code class="prettyprint">$('#testing li').text('jQuery rocks!');</code>
+                            Native Javascript:
+                            <code class="prettyprint">document.querySelector('#testing li').textContent = 'Javascript Rocks!'</code>
+                            You should notice that the native code only changes the first item. This is because to do what we did with jQuery
+                            and change all the list items, we'd have to use "querySelectorAll" and then run a loop over all the nodes
+                            it returns. Suffice to say, this is more hassle! From here on out we'll stick with jQuery for ease of use and 
+                            cross browser compatibility.
+                        </p>
+                    </li>
                 </ol>
             </span>
         </section>
