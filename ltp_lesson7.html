@@ -173,15 +173,15 @@ function Db() {
     
     this.gameData = [
         {
-            id: 1,
+            userId: 1,
             secretNum: 78
         },
         {
-            id: 2,
+            userId: 2,
             secretNum: 22
         },
         {
-            id: 3,
+            userId: 3,
             secretNum: 11
         }
     ];
@@ -234,7 +234,7 @@ function Model(db) {
             var userName        = db.users[i].name;
             var userLanguage    = db.users[i].preferred_language;
             var secretNumberMatches = $.grep(db.gameData, function(userGameData){ 
-                                            return userGameData.id == db.users[i].id; 
+                                            return userGameData.userId == db.users[i].id; 
                                         });
             var secretNumber = secretNumberMatches[0].secretNum;
 
@@ -295,7 +295,7 @@ var len = db.users.length;
                             would be too long a divergence from the main topic. 
                             What you need to know is 
                             <span class="hl">
-                                it allows us to "match" the ids from our users array to the ids in our gameData array 
+                                it allows us to "match" the ids from our users array to the userIds in our gameData array 
                                 and grab each persons' secretNumber
                             </span>.
                             Bada bing, bada boom. Most of the time in real scenarios you'll have an actual database that can handle associations
@@ -306,7 +306,7 @@ var len = db.users.length;
                             Basically we are passing grep() the userData 
                             array that stores our secret numbers as its first argument and then our
                             comparison function as its second argument. For each userData array item we are checking if its id matches our current
-                            user via "userGameData.id == db.users[i].id". If
+                            user via "userGameData.userId == db.users[i].id". If
                             that comparison is true, then that userData array item is added to the array the grep() function will return back to us.
                         </p>
                         <p>

@@ -106,15 +106,15 @@ function Db() {
     
     this.gameData = [
         {
-            id: 1,
+            userId: 1,
             secretNum: 78
         },
         {
-            id: 2,
+            userId: 2,
             secretNum: 22
         },
         {
-            id: 3,
+            userId: 3,
             secretNum: 11
         }
     ];
@@ -153,7 +153,7 @@ function Model(db) {
             var userName        = db.users[i].name;
             var userLanguage    = db.users[i].preferred_language;
             var secretNumberMatches = $.grep(db.gameData, function(userGameData){ 
-                                            return userGameData.id == db.users[i].id; 
+                                            return userGameData.userId == db.users[i].id; 
                                         });
             var secretNumber = secretNumberMatches[0].secretNum;
 
