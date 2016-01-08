@@ -695,7 +695,6 @@ function Controller() {
     var keys = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
     
     this.run = function() {
-        // 'this' is the button that calls the function. 'this.id' will return "convert".
         var inputKey    = view.getInputKey();
         var outputKey   = view.getOutputKey();
         var keyDiff     = keys.indexOf(outputKey) - keys.indexOf(inputKey);
