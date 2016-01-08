@@ -599,7 +599,8 @@ var cLoc = keys.indexOf(c)
 cLoc + keyDiff == 5 + 10 == 15
 </pre>
                         <p>
-                            Under this scenario 'D' needs to be transposed 10 steps over, but that would run us off the end of our keys array!
+                            Under this scenario 'D' needs to be transposed 10 steps over, but since 'D' starts at position 5, 
+                            that would run us off the end of our keys array! There is no keys[15]!
                             The modulus % operator loops us back around to the start of our array when we would otherwise run off the end.
                             "15 % 12" equals 3 and keys[3] equals 'C' which is indeed the correct key for the D to be transposed into.
                         </p>
